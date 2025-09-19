@@ -1,0 +1,301 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "asyncio"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ENUMS //
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  ON_LEAVE
+  TERMINATED
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum LeaveType {
+  ANNUAL
+  SICK
+  UNPAID
+}
+
+enum PayrollStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum ActivityType {
+  WORKING
+  TYPING
+  USING_COMPUTER
+  READING_DOCUMENT
+  ABSENT
+  PHONE_USAGE
+  SLEEPING
+  TALKING
+  WALKING
+  BREAK
+  OTHER
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// MODELS //
+
+model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  hashedPassword String
+  role           UserRole  @default(EMPLOYEE)
+  isActive       Boolean   @default(true)
+  isSuperuser    Boolean   @default(false)
+  name           String?
+  avatar         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  employee       Employee?
+
+  @@map("users")
+}
+
+model Employee {
+  id                    String                   @id @default(cuid())
+  userId                String                   @unique
+  user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode          String                   @unique
+  name                  String
+  avatarUrl             String?
+  dateOfBirth           DateTime?
+  department            String?
+  hireDate              DateTime
+  endDate               DateTime?
+  status                EmployeeStatus           @default(ACTIVE)
+  position              String
+  faceEmbedding         Float[]
+  deskId                String?                  @unique
+  desk                  Desk?                    @relation(fields: [deskId], references: [id])
+  
+  payrolls              Payroll[]
+  leaves                Leave[]
+  activities            Activity[]
+  warnings              Warning[]
+  shifts                EmployeeShift[]
+  
+  points                Int                      @default(0)
+  achievements          EmployeeAchievement[]
+  activityConfirmations ActivityConfirmation[]
+
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+
+  @@map("employees")
+}
+
+model Payroll {
+  id          String        @id @default(cuid())
+  employeeId  String
+  employee    Employee      @relation(fields: [employeeId], references: [id])
+  month       Int
+  year        Int
+  baseSalary  Float
+  bonuses     Float         @default(0)
+  deductions  Float         @default(0)
+  netPay      Float
+  status      PayrollStatus @default(PENDING)
+  paidAt      DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@unique([employeeId, month, year])
+  @@map("payrolls")
+}
+
+model Leave {
+  id          String      @id @default(cuid())
+  employeeId  String
+  employee    Employee    @relation(fields: [employeeId], references: [id])
+  leaveType   LeaveType
+  startDate   DateTime
+  endDate     DateTime
+  reason      String?
+  status      LeaveStatus @default(PENDING)
+  approvedBy  String? // Could be a user ID
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("leaves")
+}
+
+model Desk {
+  id         String     @id @default(cuid())
+  label      String     @unique
+  zone       String?
+  isActive   Boolean    @default(true)
+  employee   Employee?
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("desks")
+}
+
+model Camera {
+  id         String     @id @default(cuid())
+  name       String
+  source     String // URL for RTSP, path for video file, or device ID for webcam
+  location   String?
+  isActive   Boolean    @default(true)
+  activities Activity[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@map("cameras")
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  employeeId   String
+  employee     Employee     @relation(fields: [employeeId], references: [id])
+  deskId       String?
+  desk         Desk?        @relation(fields: [deskId], references: [id])
+  cameraId     String?
+  camera       Camera?      @relation(fields: [cameraId], references: [id])
+  activityType ActivityType
+  startTime    DateTime
+  endTime      DateTime?
+  details      Json?
+  createdAt    DateTime     @default(now())
+
+  @@map("activities")
+}
+
+model Policy {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  rules       Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("policies")
+}
+
+model Warning {
+  id         String   @id @default(cuid())
+  employeeId String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  reason     String
+  severity   Severity
+  isRead     Boolean  @default(false)
+  timestamp  DateTime
+  createdAt  DateTime @default(now())
+
+  @@map("warnings")
+}
+
+model Shift {
+  id        String          @id @default(cuid())
+  name      String
+  startTime String
+  endTime   String
+  employees EmployeeShift[]
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@map("shifts")
+}
+
+model EmployeeShift {
+  employeeId String
+  shiftId    String
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  shift      Shift    @relation(fields: [shiftId], references: [id])
+  assignedAt DateTime @default(now())
+
+  @@id([employeeId, shiftId])
+  @@map("employee_shifts")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String
+  target    String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@map("audit_logs")
+}
+
+model SystemSetting {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+model Achievement {
+  id          String                @id @default(cuid())
+  name        String                @unique
+  description String
+  points      Int
+  icon        String
+  employees   EmployeeAchievement[]
+
+  @@map("achievements")
+}
+
+model EmployeeAchievement {
+  id            String      @id @default(cuid())
+  employee      Employee    @relation(fields: [employeeId], references: [id])
+  employeeId    String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  achievementId String
+  awardedAt     DateTime    @default(now())
+
+  @@unique([employeeId, achievementId])
+  @@map("employee_achievements")
+}
+
+model ActivityConfirmation {
+  id          String   @id @default(cuid())
+  trackId     String
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  activity    String
+  value       Float
+  reason      String?
+  confirmedBy String?
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("activity_confirmations")
+}
+
