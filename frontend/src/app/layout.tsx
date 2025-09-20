@@ -1,37 +1,42 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Provider from "@/lib/trpc/Provider";
-import { cn } from "@/lib/utils";
-import MainLayout from "@/components/layout/MainLayout";
-import { Toaster as SonnerToaster } from "@/components/ui/sonner";
-import { Toaster } from "@/components/ui/toaster";
+import { cookies } from "next/headers";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Navbar } from "@/components/navbar";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "EBD Corp",
   description: "Employee Behavior Detection System",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          inter.variable
-        )}
-      >
-        <Provider>
-          <MainLayout>{children}</MainLayout>
-        </Provider>
-        <Toaster />
-        <SonnerToaster />
+      <body className={`${inter.className} overflow-hidden`}>
+        <SidebarProvider defaultOpen={defaultOpen}>
+          <div className="relative flex min-h-screen flex-col">
+            <Navbar />
+            <div className="flex-1">
+              <div className="flex h-full">
+                <AppSidebar />
+                <main className="flex-1 overflow-y-auto p-8">
+                  {children}
+                </main>
+              </div>
+            </div>
+          </div>
+        </SidebarProvider>
       </body>
     </html>
   );
