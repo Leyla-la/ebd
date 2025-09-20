@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Employee } from "@/lib/validators/employee";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,6 +31,13 @@ import {
 import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import { useState } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  ClipboardCopy,
+  Eye,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 
 export const columns: ColumnDef<Employee>[] = [
   {
@@ -57,6 +65,20 @@ export const columns: ColumnDef<Employee>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "avatarUrl",
+    header: "Avatar",
+    cell: ({ row }) => (
+      <Avatar className="h-8 w-8">
+        <AvatarImage
+          src={row.original.avatarUrl ?? undefined}
+          alt={row.original.name}
+        />
+        <AvatarFallback>{row.original.name.charAt(0)}</AvatarFallback>
+      </Avatar>
+    ),
+    size: 50, // Set a smaller size for the avatar column
+  },
+  {
     accessorKey: "name",
     header: ({ column }) => {
       return (
@@ -75,12 +97,21 @@ export const columns: ColumnDef<Employee>[] = [
     header: "Position",
   },
   {
+    id: "department",
+    accessorFn: (row) => row.department?.name,
+    header: "Department",
+    cell: ({ row }) => row.original.department?.name || "N/A",
+  },
+  {
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
       const role = row.original.role;
-      const variant = role === "ADMIN" ? "default" : "outline";
-      return <Badge variant={variant}>{role}</Badge>;
+      if (!role) return "N/A";
+      const variant = role === "ADMIN" ? "default" : "secondary";
+      const formattedRole =
+        role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
+      return <Badge variant={variant}>{formattedRole}</Badge>;
     },
   },
   {
@@ -90,22 +121,24 @@ export const columns: ColumnDef<Employee>[] = [
       const status = row.original.status;
       const variant =
         status === "ACTIVE"
-          ? "default"
+          ? "success"
           : status === "ON_LEAVE"
-          ? "secondary"
+          ? "warning"
           : "destructive";
-      return <Badge variant={variant}>{status.replace("_", " ")}</Badge>;
+      const formattedStatus = status.replace("_", " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+      return <Badge variant={variant}>{formattedStatus}</Badge>;
     },
   },
   {
     id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
       const employee = row.original;
       const router = useRouter();
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
       return (
-        <>
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -116,56 +149,57 @@ export const columns: ColumnDef<Employee>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(employee.id)}
+                onClick={() => {
+                  navigator.clipboard.writeText(employee.id);
+                  toast.success("Employee ID copied to clipboard");
+                }}
               >
+                <ClipboardCopy className="mr-2 h-4 w-4" />
                 Copy employee ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => router.push(`/employees/${employee.id}`)}
               >
+                <Eye className="mr-2 h-4 w-4" />
                 View details
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push(`/employees/${employee.id}/edit`)}
               >
+                <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setIsDeleteDialogOpen(true);
-                }}
-                className="text-red-600"
-              >
-                Delete
-              </DropdownMenuItem>
+              <AlertDialogTrigger asChild>
+                <DropdownMenuItem
+                  onSelect={(e) => e.preventDefault()}
+                  className="text-red-600"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </AlertDialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
-          <AlertDialog
-            open={isDeleteDialogOpen}
-            onOpenChange={setIsDeleteDialogOpen}
-          >
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  employee and remove their data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={() => console.log(`Deleting ${employee.id}`)}
-                  className={buttonVariants({ variant: "destructive" })}
-                >
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the
+                employee and remove their data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() => console.log(`Deleting ${employee.id}`)}
+                className={buttonVariants({ variant: "destructive" })}
+              >
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       );
     },
   },

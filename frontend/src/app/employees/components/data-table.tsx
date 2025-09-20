@@ -24,6 +24,13 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { columns } from "./columns";
 import { Employee } from "@/lib/validators/employee";
 
@@ -63,14 +70,57 @@ export function DataTable({ data }: DataTableProps) {
   return (
     <div>
       <div className="flex items-center justify-between py-4">
-        <Input
-          placeholder="Filter by name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
+        <div className="flex flex-1 items-center space-x-2">
+          <Input
+            placeholder="Filter by name..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="h-8 w-[150px] lg:w-[250px]"
+          />
+          <Select
+            value={
+              (table.getColumn("status")?.getFilterValue() as string) ?? "all"
+            }
+            onValueChange={(value) =>
+              table
+                .getColumn("status")
+                ?.setFilterValue(value === "all" ? "" : value)
+            }
+          >
+            <SelectTrigger className="h-8 w-[180px]">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="ACTIVE">Active</SelectItem>
+              <SelectItem value="ON_LEAVE">On Leave</SelectItem>
+              <SelectItem value="TERMINATED">Terminated</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select
+            value={
+              (table.getColumn("department")?.getFilterValue() as string) ?? "all"
+            }
+            onValueChange={(value) => {
+              const filterValue = value === "all" ? "" : value;
+              table.getColumn("department")?.setFilterValue(filterValue);
+            }}
+          >
+            <SelectTrigger className="h-8 w-[180px]">
+              <SelectValue placeholder="Filter by department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Departments</SelectItem>
+              {/* This should be populated dynamically in a real app */}
+              <SelectItem value="Magic">Magic</SelectItem>
+              <SelectItem value="Engineering">Engineering</SelectItem>
+              <SelectItem value="Design">Design</SelectItem>
+              <SelectItem value="HR">HR</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex items-center gap-2">
           {selectedRows.length > 0 && (
             <Button variant="destructive" size="sm">
