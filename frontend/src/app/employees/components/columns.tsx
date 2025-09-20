@@ -52,6 +52,7 @@ export const columns: ColumnDef<Employee>[] = [
           table.toggleAllPageRowsSelected(!!value)
         }
         aria-label="Select all"
+        className="cursor-pointer"
       />
     ),
     cell: ({ row }) => (
@@ -59,6 +60,7 @@ export const columns: ColumnDef<Employee>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value: boolean) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="cursor-pointer"
       />
     ),
     enableSorting: false,
@@ -85,6 +87,7 @@ export const columns: ColumnDef<Employee>[] = [
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="cursor-pointer"
         >
           Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -141,7 +144,7 @@ export const columns: ColumnDef<Employee>[] = [
         <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0 cursor-pointer">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
@@ -153,6 +156,7 @@ export const columns: ColumnDef<Employee>[] = [
                   navigator.clipboard.writeText(employee.id);
                   toast.success("Employee ID copied to clipboard");
                 }}
+                className="cursor-pointer"
               >
                 <ClipboardCopy className="mr-2 h-4 w-4" />
                 Copy employee ID
@@ -160,25 +164,28 @@ export const columns: ColumnDef<Employee>[] = [
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => router.push(`/employees/${employee.id}`)}
+                className="cursor-pointer"
               >
                 <Eye className="mr-2 h-4 w-4" />
                 View details
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push(`/employees/${employee.id}/edit`)}
+                className="cursor-pointer"
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
-              <AlertDialogTrigger asChild>
-                <DropdownMenuItem
-                  onSelect={(e) => e.preventDefault()}
-                  className="text-red-600"
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
-                </DropdownMenuItem>
-              </AlertDialogTrigger>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setIsDeleteDialogOpen(true);
+                }}
+                className="text-red-600 cursor-pointer"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <AlertDialogContent>
@@ -190,10 +197,12 @@ export const columns: ColumnDef<Employee>[] = [
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => console.log(`Deleting ${employee.id}`)}
-                className={buttonVariants({ variant: "destructive" })}
+                className={`${buttonVariants({
+                  variant: "destructive",
+                })} cursor-pointer`}
               >
                 Continue
               </AlertDialogAction>

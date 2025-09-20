@@ -31,6 +31,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { columns } from "./columns";
 import { Employee } from "@/lib/validators/employee";
 
@@ -46,6 +57,7 @@ export function DataTable({ data }: DataTableProps) {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = React.useState(false);
 
   const table = useReactTable({
     data,
@@ -112,24 +124,53 @@ export function DataTable({ data }: DataTableProps) {
               <SelectValue placeholder="Filter by department" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Departments</SelectItem>
+              <SelectItem value="all" className="cursor-pointer">All Departments</SelectItem>
               {/* This should be populated dynamically in a real app */}
-              <SelectItem value="Magic">Magic</SelectItem>
-              <SelectItem value="Engineering">Engineering</SelectItem>
-              <SelectItem value="Design">Design</SelectItem>
-              <SelectItem value="HR">HR</SelectItem>
+              <SelectItem value="Magic" className="cursor-pointer">Magic</SelectItem>
+              <SelectItem value="Engineering" className="cursor-pointer">Engineering</SelectItem>
+              <SelectItem value="Design" className="cursor-pointer">Design</SelectItem>
+              <SelectItem value="HR" className="cursor-pointer">HR</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="flex items-center gap-2">
-          {selectedRows.length > 0 && (
-            <Button variant="destructive" size="sm">
-              Delete ({selectedRows.length})
-            </Button>
-          )}
+          <AlertDialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+            {selectedRows.length > 0 && (
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="sm" className="cursor-pointer">
+                  Delete ({selectedRows.length})
+                </Button>
+              </AlertDialogTrigger>
+            )}
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete the
+                  selected {selectedRows.length} employee(s) and remove their data
+                  from our servers.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    const idsToDelete = selectedRows.map((row) => row.original.id);
+                    console.log("Deleting employees:", idsToDelete);
+                    // Here you would call your API to delete the employees
+                    table.toggleAllPageRowsSelected(false); // Deselect all rows after deletion
+                  }}
+                  className="cursor-pointer"
+                >
+                  Continue
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           <Button
             onClick={() => router.push("/employees/new")}
             size="sm"
+            className="cursor-pointer"
           >
             Create Employee
           </Button>
@@ -191,6 +232,7 @@ export function DataTable({ data }: DataTableProps) {
           size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
+          className="cursor-pointer"
         >
           Previous
         </Button>
@@ -199,6 +241,7 @@ export function DataTable({ data }: DataTableProps) {
           size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
+          className="cursor-pointer"
         >
           Next
         </Button>

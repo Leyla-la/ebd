@@ -1,8 +1,7 @@
 "use client";
 
-import Navbar from "@/components/layout/Navbar";
 import { Employee, Gender, MaritalStatus } from "@/lib/validators/employee";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import {
@@ -156,15 +155,17 @@ function EmployeeDetailSkeleton() {
   );
 }
 
-function EmployeeDetail({ params }: { params: { id: string } }) {
+function EmployeeDetail() {
+  const params = useParams();
   const [employee, setEmployee] = React.useState<Employee | null>(null);
   const [loading, setLoading] = React.useState(true);
   const { toast } = useToast();
 
   React.useEffect(() => {
-    if (params.id) {
+    const id = params.id as string;
+    if (id) {
       setLoading(true);
-      getEmployeeById(params.id).then((data) => {
+      getEmployeeById(id).then((data) => {
         setEmployee(data);
         setLoading(false);
       });
@@ -351,7 +352,8 @@ function EmployeeDetail({ params }: { params: { id: string } }) {
                   <InfoItem
                     icon={Phone}
                     label="Phone Number"
-                    value={employee.phoneNumber ?? "N/A"}
+                    value={employee.phoneNumber ?? "N/A"
+                    }
                   />
                 </CardContent>
               </Card>
@@ -580,17 +582,12 @@ function InfoItem({
   );
 }
 
-export default function EmployeeDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function EmployeeDetailPage() {
   return (
     <div>
-      <Navbar />
       <Suspense fallback={<EmployeeDetailSkeleton />}>
         <ErrorBoundary fallback={<p>Could not load employee details.</p>}>
-          <EmployeeDetail params={params} />
+          <EmployeeDetail />
         </ErrorBoundary>
       </Suspense>
     </div>
