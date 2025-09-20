@@ -24,6 +24,32 @@ enum EmployeeStatus {
   TERMINATED
 }
 
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum ContractType {
+  FULL_TIME
+  PART_TIME
+  CONTRACTOR
+  INTERN
+}
+
+enum ContractStatus {
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
 enum LeaveStatus {
   PENDING
   APPROVED
@@ -40,6 +66,13 @@ enum PayrollStatus {
   PENDING
   PAID
   FAILED
+}
+
+enum PayFrequency {
+  WEEKLY
+  BI_WEEKLY
+  MONTHLY
+  ANNUALLY
 }
 
 enum ActivityType {
@@ -82,69 +115,122 @@ model User {
 }
 
 model Employee {
-  id                    String                   @id @default(cuid())
-  userId                String                   @unique
-  user                  User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employeeCode          String                   @unique
+  id            String         @id @default(cuid())
+  userId        String         @unique
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode  String         @unique
   name                  String
-  avatarUrl             String?
+  email                 String         @unique
+  personalEmail         String?        @unique
+  phoneNumber           String?
+  gender                Gender?
   dateOfBirth           DateTime?
-  department            String?
-  hireDate              DateTime
-  endDate               DateTime?
-  status                EmployeeStatus           @default(ACTIVE)
-  position              String
-  faceEmbedding         Float[]
-  deskId                String?                  @unique
-  desk                  Desk?                    @relation(fields: [deskId], references: [id])
-  
-  payrolls              Payroll[]
-  leaves                Leave[]
-  activities            Activity[]
-  warnings              Warning[]
-  shifts                EmployeeShift[]
-  
-  points                Int                      @default(0)
+  maritalStatus         MaritalStatus?
+  nationality           String?
+  religion              String?
+  placeOfBirth          String?
+  address               Json? // For residential address, etc.
+  bankAccountNumber     String?
+  bankName              String?
+  avatarUrl             String?
+  avatarFile            Bytes?
+  departmentId          String?
+  department            Department?              @relation(fields: [departmentId], references: [id])
+  hireDate      DateTime
+  endDate       DateTime?
+  status        EmployeeStatus @default(ACTIVE)
+  position      String
+  faceEmbedding Float[]
+  deskId        String?        @unique
+  desk          Desk?          @relation(fields: [deskId], references: [id])
+
+  payrolls   Payroll[]
+  leaves     Leave[]
+  activities Activity[]
+  warnings   Warning[]
+  shifts     EmployeeShift[]
+  contracts  Contract[]
+  emergencyContacts EmergencyContact[]
+
+  points                Int                    @default(0)
   achievements          EmployeeAchievement[]
   activityConfirmations ActivityConfirmation[]
 
-  createdAt             DateTime                 @default(now())
-  updatedAt             DateTime                 @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("employees")
 }
 
-model Payroll {
-  id          String        @id @default(cuid())
-  employeeId  String
-  employee    Employee      @relation(fields: [employeeId], references: [id])
-  month       Int
-  year        Int
-  baseSalary  Float
-  bonuses     Float         @default(0)
-  deductions  Float         @default(0)
-  netPay      Float
-  status      PayrollStatus @default(PENDING)
-  paidAt      DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+model Contract {
+  id             String         @id @default(cuid())
+  employeeId     String
+  employee       Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  contractNumber String         @unique
+  contractType   ContractType
+  status         ContractStatus @default(ACTIVE)
+  startDate      DateTime
+  endDate        DateTime?
+  jobTitle       String
+  salary         Float
+  salaryCurrency String         @default("USD")
+  filePath       String? // URL or path to the contract document
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
-  @@unique([employeeId, month, year])
+  @@map("contracts")
+}
+
+model EmergencyContact {
+  id            String   @id @default(cuid())
+  employeeId    String
+  employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  name          String
+  relationship  String
+  phoneNumber   String
+  email         String?
+  address       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("emergency_contacts")
+}
+
+model Payroll {
+  id             String        @id @default(cuid())
+  employeeId     String
+  employee       Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  payPeriodStart DateTime
+  payPeriodEnd   DateTime
+  payDate        DateTime?
+  payRate        Float
+  payFrequency   PayFrequency
+  hoursWorked    Float?
+  grossPay       Float
+  deductions     Json? // e.g., { "taxes": 500, "insurance": 100 }
+  bonuses        Json? // e.g., { "performance": 200 }
+  netPay         Float
+  status         PayrollStatus @default(PENDING)
+  paymentMethod  String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([employeeId, payPeriodStart, payPeriodEnd])
   @@map("payrolls")
 }
 
 model Leave {
-  id          String      @id @default(cuid())
-  employeeId  String
-  employee    Employee    @relation(fields: [employeeId], references: [id])
-  leaveType   LeaveType
-  startDate   DateTime
-  endDate     DateTime
-  reason      String?
-  status      LeaveStatus @default(PENDING)
-  approvedBy  String? // Could be a user ID
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id         String      @id @default(cuid())
+  employeeId String
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+  leaveType  LeaveType
+  startDate  DateTime
+  endDate    DateTime
+  reason     String?
+  status     LeaveStatus @default(PENDING)
+  approvedBy String? // Could be a user ID
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@map("leaves")
 }
@@ -261,6 +347,16 @@ model SystemSetting {
   @@map("system_settings")
 }
 
+model Department {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  employees Employee[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@map("departments")
+}
+
 model Achievement {
   id          String                @id @default(cuid())
   name        String                @unique
@@ -298,4 +394,3 @@ model ActivityConfirmation {
 
   @@map("activity_confirmations")
 }
-
