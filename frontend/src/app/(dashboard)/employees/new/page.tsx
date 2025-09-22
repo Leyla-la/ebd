@@ -1,6 +1,6 @@
 "use client";
 
-import { EmployeeForm } from "@/app/employees/components/employee-form";
+import { EmployeeForm } from "@/app/(dashboard)/employees/components/employee-form";
 import { employeeFormSchema } from "@/lib/validators/employee";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
