@@ -1,10 +1,16 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator client {
+generator frontend_py {
   provider             = "prisma-client-py"
   interface            = "asyncio"
   recursive_type_depth = 5
+  output               = "../../../node_modules/@prisma/frontend_py"
+}
+
+generator frontend {
+  provider = "prisma-client-js"
+  output   = "../../../node_modules/@prisma/frontend"
 }
 
 datasource db {
@@ -109,56 +115,72 @@ model User {
   avatar         String?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+  
   employee       Employee?
+  admin          Admin?
 
   @@map("users")
 }
 
-model Employee {
-  id            String         @id @default(cuid())
-  userId        String         @unique
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employeeCode  String         @unique
-  name                  String
-  email                 String         @unique
-  personalEmail         String?        @unique
-  phoneNumber           String?
-  gender                Gender?
-  dateOfBirth           DateTime?
-  maritalStatus         MaritalStatus?
-  nationality           String?
-  religion              String?
-  placeOfBirth          String?
-  address               Json? // For residential address, etc.
-  bankAccountNumber     String?
-  bankName              String?
-  avatarUrl             String?
-  avatarFile            Bytes?
-  departmentId          String?
-  department            Department?              @relation(fields: [departmentId], references: [id])
-  hireDate      DateTime
-  endDate       DateTime?
-  status        EmployeeStatus @default(ACTIVE)
-  position      String
-  faceEmbedding Float[]
-  deskId        String?        @unique
-  desk          Desk?          @relation(fields: [deskId], references: [id])
-
-  payrolls   Payroll[]
-  leaves     Leave[]
-  activities Activity[]
-  warnings   Warning[]
-  shifts     EmployeeShift[]
-  contracts  Contract[]
-  emergencyContacts EmergencyContact[]
-
-  points                Int                    @default(0)
-  achievements          EmployeeAchievement[]
-  activityConfirmations ActivityConfirmation[]
-
+model Admin {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@map("admins")
+}
+
+model Employee {
+  id                  String                 @id @default(cuid())
+  userId              String                 @unique
+  user                User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeCode        String                 @unique
+  name                String
+  email               String                 @unique
+  personalEmail       String?                @unique
+  phoneNumber         String?
+  gender              Gender?
+  dateOfBirth         DateTime?
+  maritalStatus       MaritalStatus?
+  nationality         String?
+  religion            String?
+  placeOfBirth        String?
+  address             Json?
+  bankAccountNumber   String?
+  bankName            String?
+  avatarUrl           String?
+  avatarFile          Bytes?
+  departmentId        String?
+  department          Department?            @relation(fields: [departmentId], references: [id])
+  hireDate            DateTime
+  endDate             DateTime?
+  status              EmployeeStatus         @default(ACTIVE)
+  position            String
+  faceEmbedding       Float[]
+  deskId              String?                @unique
+  desk                Desk?                  @relation(fields: [deskId], references: [id])
+
+  payrolls            Payroll[]
+  leaves              Leave[]
+  activities          Activity[]
+  warnings            Warning[]
+  shifts              EmployeeShift[]
+  contracts           Contract[]
+  emergencyContacts   EmergencyContact[]
+
+  points              Int                    @default(0)
+  achievements        EmployeeAchievement[]
+  activityConfirmations ActivityConfirmation[]
+
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+
+  @@index([departmentId])
+  @@index([status])
   @@map("employees")
 }
 
@@ -174,10 +196,12 @@ model Contract {
   jobTitle       String
   salary         Float
   salaryCurrency String         @default("USD")
-  filePath       String? // URL or path to the contract document
+  filePath       String?
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 
+  @@index([employeeId])
+  @@index([status])
   @@map("contracts")
 }
 
@@ -193,6 +217,7 @@ model EmergencyContact {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@index([employeeId])
   @@map("emergency_contacts")
 }
 
@@ -207,8 +232,8 @@ model Payroll {
   payFrequency   PayFrequency
   hoursWorked    Float?
   grossPay       Float
-  deductions     Json? // e.g., { "taxes": 500, "insurance": 100 }
-  bonuses        Json? // e.g., { "performance": 200 }
+  deductions     Json?
+  bonuses        Json?
   netPay         Float
   status         PayrollStatus @default(PENDING)
   paymentMethod  String?
@@ -216,6 +241,7 @@ model Payroll {
   updatedAt      DateTime      @updatedAt
 
   @@unique([employeeId, payPeriodStart, payPeriodEnd])
+  @@index([status])
   @@map("payrolls")
 }
 
@@ -228,10 +254,12 @@ model Leave {
   endDate    DateTime
   reason     String?
   status     LeaveStatus @default(PENDING)
-  approvedBy String? // Could be a user ID
+  approvedBy String?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 
+  @@index([employeeId])
+  @@index([status])
   @@map("leaves")
 }
 
@@ -251,7 +279,7 @@ model Desk {
 model Camera {
   id         String     @id @default(cuid())
   name       String
-  source     String // URL for RTSP, path for video file, or device ID for webcam
+  source     String
   location   String?
   isActive   Boolean    @default(true)
   activities Activity[]
@@ -275,6 +303,8 @@ model Activity {
   details      Json?
   createdAt    DateTime     @default(now())
 
+  @@index([employeeId])
+  @@index([activityType])
   @@map("activities")
 }
 
@@ -300,12 +330,14 @@ model Warning {
   timestamp  DateTime
   createdAt  DateTime @default(now())
 
+  @@index([employeeId])
+  @@index([severity])
   @@map("warnings")
 }
 
 model Shift {
   id        String          @id @default(cuid())
-  name      String
+  name      String          @unique
   startTime String
   endTime   String
   employees EmployeeShift[]
@@ -335,6 +367,8 @@ model AuditLog {
   ipAddress String?
   createdAt DateTime @default(now())
 
+  @@index([actor])
+  @@index([action])
   @@map("audit_logs")
 }
 
@@ -392,5 +426,6 @@ model ActivityConfirmation {
   timestamp   DateTime @default(now())
   createdAt   DateTime @default(now())
 
+  @@index([employeeId])
   @@map("activity_confirmations")
 }
