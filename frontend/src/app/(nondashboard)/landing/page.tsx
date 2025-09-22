@@ -1,16 +1,18 @@
+
 import { Features } from "./features";
 import { Discover } from "./discover";
 import { HowItWorks } from "./how-it-works";
 import { FAQ } from "./faq";
-import { Footer } from "react-day-picker";
 import { CTA } from "./cta";
 import { Hero } from "./hero";
+import { Footer } from "./footer";
+
 
 
 const LandingPage = () => {
   return (
-    <div className="bg-background text-foreground">
-      <main>
+    <div className="bg-background text-foreground min-h-screen">
+  <main>
         <Hero />
         <Features />
         <Discover />

@@ -1,9 +1,12 @@
+
+"use client";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ChevronDown } from "lucide-react";
 
 const faqItems = [
   {
@@ -31,20 +34,30 @@ const faqItems = [
 
 export const FAQ = () => {
   return (
-    <div className="py-20">
-      <div className="container mx-auto max-w-4xl">
-        <h2 className="text-center text-4xl font-bold">
-          Frequently Asked Questions
-        </h2>
-        <Accordion type="single" collapsible className="mt-12">
-          {faqItems.map((item) => (
-            <AccordionItem key={item.question} value={item.question}>
-              <AccordionTrigger>{item.question}</AccordionTrigger>
-              <AccordionContent>{item.answer}</AccordionContent>
+    <section className="relative py-24 bg-gradient-to-b from-green-50 via-white to-green-100 overflow-hidden">
+      <div className="container mx-auto max-w-3xl">
+        <h2 className="text-center text-4xl md:text-5xl font-extrabold text-green-900 mb-4 animate-fade-in-up">Frequently Asked Questions</h2>
+        <Accordion type="single" collapsible className="mt-12 space-y-4">
+          {faqItems.map((item, i) => (
+            <AccordionItem key={item.question} value={item.question} className="border-0 rounded-2xl bg-white/90 shadow-lg animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
+              <AccordionTrigger className="flex items-center justify-between px-6 py-4 text-lg font-semibold text-green-900 hover:bg-green-50 rounded-2xl transition-all">
+                <span>{item.question}</span>
+                <ChevronDown className="ml-2 h-5 w-5 text-green-400 transition-transform duration-300 group-data-[state=open]:rotate-180" />
+              </AccordionTrigger>
+              <AccordionContent className="px-6 pb-4 text-green-800/80 text-base border-l-4 border-green-200 bg-gradient-to-r from-green-50 via-white to-green-100 rounded-b-2xl">
+                {item.answer}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
       </div>
-    </div>
+      <style jsx>{`
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: none; }
+        }
+        .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(.4,0,.2,1) both; }
+      `}</style>
+    </section>
   );
 };
