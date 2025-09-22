@@ -106,8 +106,9 @@ enum Severity {
 
 model User {
   id             String    @id @default(cuid())
+  cognitoId      String?   @unique
   email          String    @unique
-  hashedPassword String
+  hashedPassword String?
   role           UserRole  @default(EMPLOYEE)
   isActive       Boolean   @default(true)
   isSuperuser    Boolean   @default(false)
