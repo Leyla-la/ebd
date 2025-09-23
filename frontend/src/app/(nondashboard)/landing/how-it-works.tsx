@@ -48,7 +48,7 @@ export const HowItWorks = () => {
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-green-200 via-green-100 to-green-50 flex items-center justify-center shadow-lg mb-4 border-4 border-green-100 animate-pulse-slow">
                 <span className="text-green-600 text-4xl">{step.icon}</span>
               </div>
-              <Card className="w-full bg-white/90 rounded-2xl shadow-xl border border-green-100 p-6 flex flex-col items-center text-center">
+              <Card className="w-full bg-white/90 rounded-2xl shadow-xl border border-green-100 p-6 flex flex-col items-center text-center min-h-[300px]">
                 <CardHeader>
                   <CardTitle className="mt-2 text-lg font-bold text-green-900">
                     {step.title}
@@ -61,8 +61,8 @@ export const HowItWorks = () => {
                 </CardContent>
               </Card>
               {index < processSteps.length - 1 && (
-                <div className="hidden lg:flex items-center absolute right-[-50%] top-1/2 w-full justify-center">
-                  <div className="w-16 h-1 bg-green-300 rounded-full mx-auto" />
+                <div className="hidden lg:flex items-center absolute right-[-55%] top-[calc(100%-144px)] w-full justify-center">
+                  <div className="w-8 h-1 bg-green-300 rounded-full mx-auto" />
                 </div>
               )}
             </div>

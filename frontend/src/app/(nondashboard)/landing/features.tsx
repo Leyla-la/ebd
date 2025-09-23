@@ -6,6 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
 import {
   BarChart,
   Bot,
@@ -75,21 +79,77 @@ export const Features = () => {
       <div className="container mx-auto relative z-10">
   <h2 className="text-center text-3xl md:text-4xl font-bold text-green-900 mb-4">A Comprehensive Feature Set</h2>
   <p className="mt-2 text-center text-base text-green-800/80 font-medium">Everything you need to automate monitoring and boost productivity.</p>
-        <div className="mt-16 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          {features.map((feature, i) => (
-            <div
-              key={feature.title}
-              data-aos="fade-up"
-              data-aos-delay={100 + i * 80}
-              className="group bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center border border-green-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-out cursor-pointer"
-            >
-              <div className="mb-4 flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-200 via-green-100 to-green-50 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
-                <span className="motion-safe:animate-bounce group-hover:motion-safe:animate-spin text-green-600 text-4xl">{feature.icon}</span>
-              </div>
-              <h3 className="text-xl font-bold text-green-900 mb-2">{feature.title}</h3>
-              <p className="text-green-800/80 text-base font-medium">{feature.description}</p>
-            </div>
-          ))}
+        <div className="mt-16 relative">
+          <Swiper
+            modules={[Navigation]}
+            navigation
+            spaceBetween={32}
+            slidesPerView={1}
+            breakpoints={{
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 4 },
+            }}
+            className="!pb-12"
+          >
+            {features.map((feature, i) => (
+              <SwiperSlide key={feature.title}>
+                <div
+                  data-aos="fade-up"
+                  data-aos-delay={100 + i * 80}
+                  className="group bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center border border-green-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-out cursor-pointer min-h-[340px] h-full"
+                >
+                  <div className="mb-4 flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-200 via-green-100 to-green-50 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
+                    <span className="motion-safe:animate-bounce group-hover:motion-safe:animate-spin text-green-600 text-4xl">{feature.icon}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-green-900 mb-2">{feature.title}</h3>
+                  <p className="text-green-800/80 text-base font-medium">{feature.description}</p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+          <style jsx global>{`
+            .swiper-button-next, .swiper-button-prev {
+              z-index: 30;
+              top: 50% !important;
+              transform: translateY(-50%);
+              width: 48px;
+              height: 48px;
+              background: rgba(255,255,255,0.85);
+              border-radius: 9999px;
+              box-shadow: 0 2px 8px 0 rgba(16, 185, 129, 0.10);
+              color: #16a34a;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+            }
+            .swiper-button-prev {
+              left: 8px !important;
+            }
+            .swiper-button-next {
+              right: 8px !important;
+            }
+            @media (min-width: 1024px) {
+              .swiper-button-prev {
+                left: -72px !important;
+              }
+              .swiper-button-next {
+                right: -72px !important;
+              }
+            }
+            .swiper-button-next, .swiper-button-prev {
+              border: 1.5px solid #bbf7d0;
+            }
+            .swiper-button-next:hover, .swiper-button-prev:hover {
+              background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+              color: #166534;
+              box-shadow: 0 4px 16px 0 rgba(16, 185, 129, 0.18);
+            }
+            .swiper-button-next:after, .swiper-button-prev:after {
+              font-size: 1.5rem;
+              font-weight: bold;
+            }
+          `}</style>
         </div>
       </div>
     </div>
