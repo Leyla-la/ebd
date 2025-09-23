@@ -1,3 +1,4 @@
+"use client";
 
 import { Features } from "./features";
 import { Discover } from "./discover";
@@ -7,18 +8,28 @@ import { CTA } from "./cta";
 import { Hero } from "./hero";
 import { Footer } from "./footer";
 
-
-
 const LandingPage = () => {
   return (
-    <div className="bg-background text-foreground min-h-screen">
-  <main>
-        <Hero />
-        <Features />
-        <Discover />
-        <HowItWorks />
-        <FAQ />
-        <CTA />
+  <div className="min-h-screen w-full bg-gradient-to-b from-green-100 via-green-50 to-green-200 text-foreground">
+      <main>
+        <section data-aos="fade-up" data-aos-delay="0">
+          <Hero />
+        </section>
+        <section data-aos="fade-up" data-aos-delay="100">
+          <Features />
+        </section>
+        <section data-aos="fade-up" data-aos-delay="200">
+          <Discover />
+        </section>
+        <section data-aos="fade-up" data-aos-delay="300">
+          <HowItWorks />
+        </section>
+        <section data-aos="fade-up" data-aos-delay="400">
+          <FAQ />
+        </section>
+        <section data-aos="zoom-in" data-aos-delay="500">
+          <CTA />
+        </section>
       </main>
       <Footer />
     </div>

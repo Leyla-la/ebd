@@ -70,17 +70,18 @@ const features = [
 
 export const Features = () => {
   return (
-    <section className="relative py-24 bg-gradient-to-b from-green-50 via-white to-green-100 overflow-hidden">
-      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[80vw] h-64 bg-green-200/30 rounded-full blur-3xl z-0" />
+  <div className="relative py-24 overflow-hidden">
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[80vw] h-64 rounded-full blur-3xl z-0" />
       <div className="container mx-auto relative z-10">
-        <h2 className="text-center text-4xl md:text-5xl font-extrabold text-green-900 mb-4 animate-fade-in-up">A Comprehensive Feature Set</h2>
-        <p className="mt-2 text-center text-lg text-green-800/80 font-medium animate-fade-in-up delay-100">Everything you need to automate monitoring and boost productivity.</p>
+  <h2 className="text-center text-3xl md:text-4xl font-bold text-green-900 mb-4">A Comprehensive Feature Set</h2>
+  <p className="mt-2 text-center text-base text-green-800/80 font-medium">Everything you need to automate monitoring and boost productivity.</p>
         <div className="mt-16 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature, i) => (
             <div
               key={feature.title}
-              className={`group bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center border border-green-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-out cursor-pointer opacity-0 translate-y-10 animate-fade-in-up`} 
-              style={{ animationDelay: `${i * 80}ms` }}
+              data-aos="fade-up"
+              data-aos-delay={100 + i * 80}
+              className="group bg-white/80 rounded-3xl shadow-xl p-8 flex flex-col items-center text-center border border-green-100 hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-out cursor-pointer"
             >
               <div className="mb-4 flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-green-200 via-green-100 to-green-50 shadow-inner group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300">
                 <span className="motion-safe:animate-bounce group-hover:motion-safe:animate-spin text-green-600 text-4xl">{feature.icon}</span>
@@ -91,6 +92,6 @@ export const Features = () => {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
