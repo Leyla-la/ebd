@@ -6,10 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
 import {
   BarChart,
   Bot,
@@ -73,23 +74,57 @@ const features = [
 ];
 
 export const Features = () => {
+  const swiperRef = useRef<any>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [maxIndex, setMaxIndex] = useState(0);
+
   return (
-  <div className="relative py-24 overflow-hidden">
+    <div className="relative py-24 overflow-hidden">
       <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[80vw] h-64 rounded-full blur-3xl z-0" />
       <div className="container mx-auto relative z-10">
-  <h2 className="text-center text-3xl md:text-4xl font-bold text-green-900 mb-4">A Comprehensive Feature Set</h2>
-  <p className="mt-2 text-center text-base text-green-800/80 font-medium">Everything you need to automate monitoring and boost productivity.</p>
-        <div className="mt-16 relative">
+        <h2 className="text-center text-3xl md:text-4xl font-bold text-green-900 mb-4">A Comprehensive Feature Set</h2>
+        <p className="mt-2 text-center text-base text-green-800/80 font-medium">Everything you need to automate monitoring and boost productivity.</p>
+        <div className="mt-16 relative" style={{zIndex: 100}}>
+          {/* Fade left */}
+          <div
+            className={`pointer-events-none absolute left-0 top-0 h-full w-40 z-[10] transition-opacity duration-200 ${activeIndex > 0 ? 'opacity-100' : 'opacity-0'}`}
+            style={{
+              background:
+                'radial-gradient(circle at left, rgba(16,185,129,0.85) 60%, rgba(34,197,94,0.5) 80%, rgba(16,185,129,0.15) 95%, rgba(16,185,129,0) 100%)',
+              boxShadow: '0 0 32px 8px rgba(16,185,129,0.12)'
+            }}
+          />
+          {/* Fade right */}
+          <div
+            className={`pointer-events-none absolute right-0 top-0 h-full w-40 z-[10] transition-opacity duration-200 ${activeIndex < maxIndex ? 'opacity-100' : 'opacity-0'}`}
+            style={{
+              background:
+                'radial-gradient(circle at right, rgba(16,185,129,0.85) 60%, rgba(34,197,94,0.5) 80%, rgba(16,185,129,0.15) 95%, rgba(16,185,129,0) 100%)',
+              boxShadow: '0 0 32px 8px rgba(16,185,129,0.12)'
+            }}
+          />
           <Swiper
             modules={[Navigation]}
-            navigation
+            navigation={{
+              prevEl: '.custom-swiper-prev',
+              nextEl: '.custom-swiper-next',
+              disabledClass: 'hidden',
+            }}
+            onSwiper={swiper => {
+              swiperRef.current = swiper;
+              let slidesPerView = swiper.params.slidesPerView;
+              if (typeof slidesPerView !== 'number') slidesPerView = 1;
+              setMaxIndex(swiper.slides.length - slidesPerView);
+            }}
+            onSlideChange={swiper => setActiveIndex(swiper.activeIndex)}
             spaceBetween={32}
             slidesPerView={1}
             breakpoints={{
               768: { slidesPerView: 2 },
               1024: { slidesPerView: 4 },
             }}
-            className="!pb-12"
+            className="z-[2000]"
+            style={{zIndex: 2000, position: 'relative'}}
           >
             {features.map((feature, i) => (
               <SwiperSlide key={feature.title}>
@@ -107,51 +142,31 @@ export const Features = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+          {/* Custom navigation buttons */}
+          <button
+            className={`custom-swiper-prev absolute left-2 top-1/2 -translate-y-1/2 p-0 bg-transparent border-none shadow-none text-green-700 hover:text-green-900 focus:outline-none z-[9999] transition-opacity duration-200 ${activeIndex > 0 ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            aria-label="Previous"
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button
+            className={`custom-swiper-next absolute right-2 top-1/2 -translate-y-1/2 p-0 bg-transparent border-none shadow-none text-green-700 hover:text-green-900 focus:outline-none z-[9999] transition-opacity duration-200 ${activeIndex < maxIndex ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+            aria-label="Next"
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
           <style jsx global>{`
-            .swiper-button-next, .swiper-button-prev {
-              z-index: 30;
-              top: 50% !important;
-              transform: translateY(-50%);
-              width: 48px;
-              height: 48px;
-              background: rgba(255,255,255,0.85);
-              border-radius: 9999px;
-              box-shadow: 0 2px 8px 0 rgba(16, 185, 129, 0.10);
-              color: #16a34a;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              transition: background 0.2s, box-shadow 0.2s, color 0.2s;
-            }
-            .swiper-button-prev {
-              left: 8px !important;
-            }
-            .swiper-button-next {
-              right: 8px !important;
-            }
-            @media (min-width: 1024px) {
-              .swiper-button-prev {
-                left: -72px !important;
-              }
-              .swiper-button-next {
-                right: -72px !important;
-              }
+            .swiper {
+              z-index: 2000 !important;
+              position: relative;
             }
             .swiper-button-next, .swiper-button-prev {
-              border: 1.5px solid #bbf7d0;
-            }
-            .swiper-button-next:hover, .swiper-button-prev:hover {
-              background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
-              color: #166534;
-              box-shadow: 0 4px 16px 0 rgba(16, 185, 129, 0.18);
-            }
-            .swiper-button-next:after, .swiper-button-prev:after {
-              font-size: 1.5rem;
-              font-weight: bold;
+              display: none !important;
             }
           `}</style>
         </div>
       </div>
     </div>
   );
-};
+// ...existing code...
+}
