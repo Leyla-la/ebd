@@ -1,51 +1,55 @@
-// import { Request, Response, NextFunction } from "express";
-// import jwt, { JwtPayload } from "jsonwebtoken";
 
-// interface DecodedToken extends JwtPayload {
-//   sub: string;
-//   "custom:role"?: string;
-// }
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-// declare global {
-//   namespace Express {
-//     interface Request {
-//       user?: {
-//         id: string;
-//         role: string;
-//       };
-//     }
-//   }
-// }
+interface DecodedToken extends JwtPayload {
+  sub: string;
+  "cognito:groups"?: string[];
+}
 
-// export const authMiddleware = (allowedRoles: string[]) => {
-//   return (req: Request, res: Response, next: NextFunction): void => {
-//     const token = req.headers.authorization?.split(" ")[1];
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        role: string;
+      };
+    }
+  }
+}
 
-//     if (!token) {
-//       res.status(401).json({ message: "Unauthorized" });
-//       return;
-//     }
+// ...existing code...
+export const authMiddleware = (allowedGroups: string[]) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const token = req.headers.authorization?.split(" ")[1];
 
-//     try {
-//       const decoded = jwt.decode(token) as DecodedToken;
-//       const userRole = decoded["custom:role"] || "";
-//       req.user = {
-//         id: decoded.sub,
-//         role: userRole,
-//       };
+    if (!token) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
 
-//       const hasAccess = allowedRoles.includes(userRole.toLowerCase());
+    try {
+      const decoded = jwt.decode(token) as DecodedToken;
+      const userGroups = decoded["cognito:groups"] || [];
+      req.user = {
+        id: decoded.sub,
+        role: userGroups[0] || "", // or store all groups if needed
+      };
 
-//       if (!hasAccess) {
-//         res.status(401).json({ message: "Access denied" });
-//         return;
-//       }
-//     } catch (err) {
-//       console.error("Failed to decode token:", err);
-//       res.status(400).json({ message: "Invalid token" });
-//       return;
-//     }
+      const hasAccess = userGroups.some(group =>
+        allowedGroups.includes(group)
+      );
 
-//     next();
-//   };
-// };
+      if (!hasAccess) {
+        res.status(401).json({ message: "Access denied" });
+        return;
+      }
+    } catch (err) {
+      console.error("Failed to decode token:", err);
+      res.status(400).json({ message: "Invalid token" });
+      return;
+    }
+
+    next();
+  };
+};

@@ -24,7 +24,7 @@ export const Hero = () => {
             delaySpeed={1800}
           />
         </p>
-        <Link href="/auth/login">
+        <Link href="/signin">
           <Button
             size="lg"
             className="mt-4 px-12 py-6 rounded-full bg-gradient-to-r from-green-400 via-green-300 to-green-200 text-green-900 font-bold text-2xl shadow-xl transition-colors duration-500 hover:bg-gradient-to-r hover:from-green-200 hover:via-green-400 hover:to-green-500"
