@@ -17,7 +17,7 @@ export const CTA = () => {
           Sign in now to unlock the full potential of employee behavior
           detection and productivity insights.
         </p>
-        <Link href="/auth/login" className="w-full flex justify-center">
+        <Link href="/signin" className="w-full flex justify-center">
           <Button
             size="lg"
             className="px-10 py-5 rounded-full bg-gradient-to-r from-green-400 via-green-300 to-green-200 text-green-900 font-bold text-xl shadow-lg transition-colors duration-500 hover:bg-gradient-to-r hover:from-green-200 hover:via-green-400 hover:to-green-500"

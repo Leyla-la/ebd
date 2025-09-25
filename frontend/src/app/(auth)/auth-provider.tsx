@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect } from "react";
 import { Amplify } from "aws-amplify";
 import {
@@ -10,6 +9,26 @@ import {
 } from "@aws-amplify/ui-react";
 import "@aws-amplify/ui-react/styles.css";
 import { useRouter, usePathname } from "next/navigation";
+import { fetchAuthSession } from "@aws-amplify/auth";
+// Debug: Log Cognito ID token payload after login
+function useLogCognitoGroups() {
+  useEffect(() => {
+    async function logGroups() {
+      try {
+        const session = await fetchAuthSession();
+        const idToken = session.tokens?.idToken?.toString();
+        const payload = idToken ? JSON.parse(atob(idToken.split('.')[1])) : null;
+        console.log("ID Token Payload:", payload);
+        console.log("cognito:groups:", payload?.["cognito:groups"]);
+      } catch (err) {
+        // Not logged in or error
+        console.log("No session or error getting token:", err);
+      }
+    }
+    logGroups();
+  }, []);
+}
+
 
 Amplify.configure({
   Auth: {
@@ -59,10 +78,42 @@ const formFields = {
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  // Debug: log Cognito groups after login
+  useLogCognitoGroups();
   const router = useRouter();
   const pathname = usePathname();
-
   const isAuthPage = pathname.match(/^\/(signin)$/);
+
+  // Nested component to handle redirect inside Authenticator context
+  function RedirectOnAuth() {
+    const { user } = useAuthenticator((context) => [context.user]);
+    useEffect(() => {
+      if (!user || !isAuthPage) return;
+      // Always fetch the latest session for a fresh ID token
+      (async () => {
+        try {
+          const session = await fetchAuthSession();
+          const idToken = session.tokens?.idToken?.toString();
+          if (!idToken) {
+            console.warn("No idToken from fetchAuthSession");
+            return;
+          }
+          const payload = JSON.parse(atob(idToken.split('.')[1]));
+          console.log("ID Token Payload (from fetchAuthSession):", payload);
+          const groups = payload["cognito:groups"];
+          console.log("cognito:groups (from fetchAuthSession):", groups);
+          if (Array.isArray(groups) && groups.includes("SuperAdmins")) {
+            router.push("/admin/dashboard");
+          } else {
+            router.push("/");
+          }
+        } catch (err) {
+          console.warn("Error fetching session or decoding idToken:", err);
+        }
+      })();
+    }, [user, isAuthPage, router]);
+    return null;
+  }
 
   if (!isAuthPage) {
     return <>{children}</>;
@@ -90,14 +141,8 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               hideSignUp
               className="!font-sans"
             >
-              {({ user }: any) => {
-                useEffect(() => {
-                  if (user && isAuthPage) {
-                    router.push("/");
-                  }
-                }, [user, isAuthPage, router]);
-                return <>{children}</>;
-              }}
+              {/* Use nested component for redirect logic */}
+              {() => <><RedirectOnAuth />{children}</>}
             </Authenticator>
           </div>
         </div>
