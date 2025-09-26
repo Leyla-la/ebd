@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/frontend';
 import { faker } from '@faker-js/faker';
+import { mockEmergencyContacts } from './employeeMockData.js';
 
 export async function seedEmergencyContacts(prisma: PrismaClient) {
   console.log('Seeding emergency contacts...');
@@ -22,4 +23,22 @@ export async function seedEmergencyContacts(prisma: PrismaClient) {
     });
   }
   console.log('Emergency contacts seeded.');
+}
+
+export async function seedEmergencyContactsFromMock(prisma: any) {
+  console.log('Seeding emergency contacts from mock data...');
+  for (const ec of mockEmergencyContacts) {
+    await prisma.emergencyContact.create({
+      data: {
+        id: ec.id,
+        employeeId: ec.employeeId,
+        name: ec.name,
+        relationship: ec.relationship,
+        phoneNumber: ec.phoneNumber,
+        email: ec.email,
+        address: ec.address,
+      },
+    });
+  }
+  console.log('Emergency contacts seeded from mock data.');
 }

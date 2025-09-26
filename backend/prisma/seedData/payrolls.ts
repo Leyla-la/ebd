@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/frontend';
 import { faker } from '@faker-js/faker';
+import { mockPayrolls } from './employeeMockData.js';
 
 export async function seedPayrolls(prisma: PrismaClient) {
   console.log('Seeding payrolls...');
@@ -42,4 +43,32 @@ export async function seedPayrolls(prisma: PrismaClient) {
     }
   }
   console.log('Payrolls seeded.');
+
+  console.log('Seeding payrolls from mock data...');
+  for (const p of mockPayrolls) {
+    await prisma.payroll.create({
+      data: {
+        employeeId: p.employeeId,
+        month: p.month,
+        year: p.year,
+        baseSalary: p.baseSalary,
+        allowance: p.allowance,
+        bonus: p.bonus,
+        deduction: p.deduction,
+        tax: p.tax,
+        kpiAttendance: p.kpiAttendance,
+        kpiBehaviour: p.kpiBehaviour,
+        kpiPerformance: p.kpiPerformance,
+        kpiTotal: p.kpiTotal,
+        bonusByKPI: p.bonusByKPI,
+        penaltyByBehaviour: p.penaltyByBehaviour,
+        netSalary: p.netSalary,
+        paymentStatus: p.paymentStatus,
+        paymentDate: p.paymentDate ? new Date(p.paymentDate) : undefined,
+        autoDeducted: p.autoDeducted,
+        payrollFileUrl: p.payrollFileUrl,
+      }
+    });
+  }
+  console.log('Payrolls seeded from mock data.');
 }
