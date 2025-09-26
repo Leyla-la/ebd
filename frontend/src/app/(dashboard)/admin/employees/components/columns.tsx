@@ -163,14 +163,14 @@ export const columns: ColumnDef<Employee>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => router.push(`/employees/${employee.id}`)}
+                onClick={() => router.push(`admin/employees/${employee.id}`)}
                 className="cursor-pointer"
               >
                 <Eye className="mr-2 h-4 w-4" />
                 View details
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => router.push(`/employees/${employee.id}/edit`)}
+                onClick={() => router.push(`admin/employees/${employee.id}/edit`)}
                 className="cursor-pointer"
               >
                 <Pencil className="mr-2 h-4 w-4" />

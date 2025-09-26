@@ -23,12 +23,12 @@ import { useSidebar } from "@/components/ui/sidebar";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
-  { href: "/employees", label: "Employees", icon: Users },
-  { href: "/payroll", label: "Payroll", icon: DollarSign },
-  { href: "/shifts", label: "Shifts", icon: Briefcase },
-  { href: "/cameras", label: "Cameras", icon: Camera },
-  { href: "/reports", label: "Reports", icon: BarChart2 },
-  { href: "/policies", label: "Policies", icon: Shield },
+  { href: "/admin/employees", label: "Employees", icon: Users },
+  { href: "/admin/payroll", label: "Payroll", icon: DollarSign },
+  { href: "/admin/shifts", label: "Shifts", icon: Briefcase },
+  { href: "/admin/cameras", label: "Cameras", icon: Camera },
+  { href: "/admin/reports", label: "Reports", icon: BarChart2 },
+  { href: "/admin/policies", label: "Policies", icon: Shield },
 ];
 
 export function AppSidebar() {
