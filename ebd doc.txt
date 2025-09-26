@@ -1,0 +1,87 @@
+
+Em chúc thầy/anh một ngày mới zui zẻ ạ!!!!  ❤️🧡💛 💚💙💜🤎🖤 🤍 💖 💗💓💔 💞💕 💘 💝 
+
+Employee Behavior Detection System (EBD) – Project Document
+
+Tên thành viên	Nhiệm vụ
+Đỗ Ánh - 2201040012	Frontend
+TTGiang - 2101040075	Backend
+TTGiang - 2101040075	Project manager
+Đỗ Ánh - 2201040012	Tester
+TTGiang - 2101040075	Tech leader
+
+I. Giới thiệu dự án
+Tên dự án: Employee Behavior Detection (EBD).
+ Mục tiêu: Giúp doanh nghiệp nhỏ (SMEs, 3–5 người, có thể scale lên 10-15) theo dõi hiệu suất nhân viên một cách minh bạch, tự động và chi phí hợp lý.
+●Pain point: SMEs không có hệ thống giám sát hiệu quả; HR làm thủ công, mất thời gian và dễ sai lệch.
+●Solution: Dùng Computer Vision + Machine Learning để tự động phân tích hành vi từ camera văn phòng → báo cáo hiệu suất → tích hợp payroll.
+●Value:
+○Tăng minh bạch, công bằng trong khen thưởng/kỷ luật.
+○Tự động hóa giám sát, giảm ~80% công việc HR thủ công.
+○Triển khai nhanh, phù hợp SMEs.
+II. Dataset
+●Nguồn: OFFICEDATA – Edinburgh University.
+●Dts insights:
+○Camera văn phòng cố định, độ phân giải 1280×720, khoảng 1 fps.
+○Dữ liệu kéo dài ~20 ngày, có 0–3 người mỗi khung hình.
+○Hành vi cơ bản: ngồi làm, rời bàn, đi lại, nói chuyện, tương tác.
+○Ánh sáng thay đổi (ban ngày/ban đêm), có nhiều khung trống.
+●Giới hạn: dataset nhỏ (3 nhân viên).
+●Hướng mở rộng: thu thêm video nội bộ (10–15 nhân viên, nhiều bàn, nhiều camera) để fine-tune model.
+III. Policies
+Manager có thể định nghĩa chính sách qua web UI:
+●Ca làm việc: giờ bắt đầu/kết thúc, break hợp lệ.
+●Ngưỡng vắng mặt: số phút liên tục tối đa.
+●Giới hạn sử dụng điện thoại: % thời gian cho phép.
+●Cảnh báo tự động: sinh alert khi vi phạm (UI + webhook/email).
+●Phân quyền (RBAC):
+○Employee: chỉ xem dashboard cá nhân.
+○Manager: toàn quyền quản trị.
+●Bảo mật: JWT login, AES-256 mã hóa dữ liệu, audit logs.
+IV. Core functions (MVP)
+#	Tính năng	Input	Xử lý / Rule	Tools/Tech	Output
+1	Nhận diện bàn làm việc	Video (RTSP/MP4/Webcam)	Object detection để phân vùng bàn làm việc	YOLOv8 (phát hiện vật thể chính xác, dễ fine-tune); OpenCV (tiền xử lý video)	JSON: desk_id, bbox, tọa độ
+2	Face detection & ID	Video frames	Nhận diện khuôn mặt → embedding → so khớp nhân viên	MTCNN (detect face robust ánh sáng kém), FaceNet (tạo vector 128D để nhận diện nhân viên)	JSON: person_id, timestamp; lưu DB
+3	Person tracking & Trạng thái	Video stream	Theo dõi nhân viên + phân loại trạng thái	YOLOv8 (detect person), DeepSORT (multi-object tracking realtime), CNN/LSTM (classify hành vi theo chuỗi frame)	Realtime JSON qua WebSocket; log hiệu suất
+4	Phát hiện hành vi bất thường	Tracking log	So sánh log với rule (vắng >30’, dùng ĐT >10%)	Python rule engine (custom), Postgres trigger (kiểm tra log liên tục)	Alert realtime (UI + webhook/email)
+5	Multi-camera support	5+ camera streams	Xử lý song song, đồng bộ hóa ID nhân viên trên nhiều camera	FFmpeg/GStreamer (decode video stream), Postgres (lưu track-id, đồng bộ multi-view)	Dashboard hợp nhất multi-view
+6	Dashboard trực quan	Dữ liệu từ tracking & log	Trực quan hóa video + biểu đồ	ReactJS (frontend), Chart.js (pie/line/heatmap), WebSocket (stream realtime)	Dashboard live-feed + export CSV/PDF
+7	HR & Payroll	Hiệu suất nhân viên (giờ làm, vắng mặt, vi phạm)	Rule: trừ lương khi vắng, thưởng hiệu suất, tính OT	Pandas + openpyxl (update Excel payroll template), Jinja2 + ReportLab/WeasyPrint (tạo PDF phiếu lương), Google Sheets API (HR update online), ERP/HRM API (đồng bộ với hệ thống có sẵn), n8n/Make (workflow automation gửi mail)	Excel/Google Sheet tự động, PDF bảng lương từng nhân viên, Payroll API
+8	Policy & Security	Config từ Manager	RBAC, bảo mật & quản lý chính sách	FastAPI (REST API), JWT (login), AES-256 (mã hóa), Postgres (lưu policy + audit logs)	Dashboard phân quyền, logs minh bạch
+V. Advanced Functions (Optional)
+#	Tính năng	Input	Xử lý / Rule	Tools/Tech	Output
+9	Predictive analytics	Lịch sử hiệu suất	ML dự đoán xu hướng năng suất	Scikit-learn/XGBoost/LightGBM (thuật toán time-series/forecast), Pandas (feature engineering)	Dự báo hiệu suất, gợi ý chính sách
+10	Nhận diện ngữ cảnh (Context)	Clip video (2–5s)	Phân loại hành vi cụ thể (gõ phím, đọc tài liệu…)	Timesformer (Transformer cho video sequence), HuggingFace (model zoo, dễ fine-tune)	JSON: context label
+11	Chatbot quản lý	Text/voice query + ảnh nhân viên	NLP + nhận diện giọng nói + CRUD DB	BERT/Grok3 (NLP), Whisper/Google STT (voice), YOLOv8/MTCNN (face verify ảnh), DynamoDB/Postgres (query hiệu suất)	Trả lời text/voice, CRUD nhân sự/policy, gợi ý rule
+12	Gamification	Hiệu suất	Tính điểm, gán huy hiệu, leaderboard	Python rule engine (gamification logic), ReactJS (UI)	Leaderboard, badges
+13	Đa ngôn ngữ	UI text	Quốc tế hóa UI	i18next (React i18n), Google/DeepL API (dịch)	UI đa ngôn ngữ (Việt, Anh, Khác)
+14	Mobile app	API backend	Realtime dashboard + cảnh báo di động	React Native/Flutter (cross-platform app), FastAPI (backend)	App iOS/Android
+15	IoT integration (real camera + sensor -> maybe we cannot do this)	Sensor (ánh sáng, nhiệt độ)	Ghép log video + sensor	MQTT broker (sensor stream), Python FastAPI (kết nối)	Dashboard môi trường làm việc
+16	Night/Day mode	UI theme	Theme switcher	React theme toggle	Dark/Light mode UI
+VI. Workflow tổng thể
+1.Ingest: Camera stream → frame sampling.
+2.Detect: YOLOv8 phát hiện bàn & người.
+3.Face Recognition: MTCNN detect → FaceNet embed → ID match.
+4.Tracking: DeepSORT theo dõi từng nhân viên.
+5.State Classification: CNN/LSTM phân loại hành vi.
+6.Policy Engine: Rule check (vắng, ĐT, break) → alert.
+7.Data Store: Lưu Postgres (hiệu suất, cảnh báo).
+8.Dashboard: React + Chart.js hiển thị realtime.
+9.Payroll Engine: lấy dữ liệu → update Excel/Google Sheet/PDF tự động.
+10.Advanced Layer: chatbot query, predictive ML, gamification.
+VII. Môi trường phát triển
+●Model training: Python 3.10, PyTorch, TensorFlow.
+●Serving: FastAPI (REST/WebSocket), Docker.
+●Frontend: ReactJS + Chart.js.
+●DB: PostgreSQL (log + config), DynamoDB (chatbot NLP).
+●Payroll integration: Pandas, openpyxl, Google Sheets API, n8n.
+●Deployment: Docker Compose, Kubernetes (if scale).
+VIII. Phân vân
+●Dataset nhỏ (3 nhân viên) → cần thêm data nội bộ để scale lên 10–15 người (em đã tìm các nguồn dataset nhưng với dạng cctv record medium office room thì khó tìm được nguồn free/open mà có 2 cam trở lên 1 phòng => nhiều góc bị khuất, khó detect/detect lỗi)
+●Face recognition khó trong môi trường ánh sáng yếu (vì quyền riêng tư nên video source có độ phân giải kém với employee face/không public ảnh thẻ nhân viên => bọn em đang suy nghĩ thêm ạ).
+●Làm sao có thể phân biệt được giữa employee discuss work và just chatting/talking ạ? vì cctv record phần lớn sẽ không có âm thanh (những nguồn video em tìm được) -> không thể dùng nlp để bắt keywords mà classify được/ mà dựa vào cảm xúc thì bị chủ quan quá -> liệu bọn em có nên bỏ luôn class Talking đi hay không ạ? Hoặc nếu để thì có cách nào phân loại đúng được không ạ?
+●Để chạy train model thuộc mảng CV tốn rất nhiều dung lượng -> máy giật/lag -> Nếu chọn model nhẹ hơn thì khả năng detect của nó lại không chính xác cao -> có cách nào tối ưu hơn để xử lí vấn đề này không ạ? (em mới chạy trên vscode chưa chuyển code sang google colab để thử ạ/nếu khi thử vẫn có vấn đề với performance/runtime em sẽ lại hỏi tiếp ạ)
+●Em từng thử làm multi language cho movie app dùng i18n nhưng cảm thấy rất mất thời gian, có cách nào khác có thể nhanh hơn và free không ạ?
+●Privacy: cần compliance GDPR/PDPA.
+Chúng em thật sự rất biết ơn khi thầy/anh đã dành thời gian đọc qua bản description docx này. Vì kinh nghiệm của bọn em còn hạn chế, nên chắc chắn ý tưởng vẫn còn nhiều chỗ chưa chặt chẽ hoặc còn thiếu sót. Chúng em rất mong nhận được góp ý thẳng thắn từ thầy/anh: phần nào hợp lý, phần nào chưa ổn, và hướng nào có thể phát triển thêm để hoàn thiện hơn. Mỗi góp ý của thầy/anh đều rất quý giá để bọn em cải thiện dự án này ạaaaaaa.
+Chúng em cảm ơn thầy/anh nhiều ạaa!!!! ❤️🧡💛 💚💙💜🤎🖤 🤍 💖 💗💓💔 💞💕 💘 💝 
