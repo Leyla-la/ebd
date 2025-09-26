@@ -1,3 +1,4 @@
+import { id } from "date-fns/locale";
 import * as z from "zod";
 
 // Enums from the Prisma schema
@@ -22,6 +23,7 @@ export const UserSchema = z.object({
 
 // Emergency Contact Schema
 export const emergencyContactSchema = z.object({
+  id: z.string(),
   name: z.string().min(2, "Name is required."),
   relationship: z.string().min(2, "Relationship is required."),
   phoneNumber: z.string().min(10, "Phone number is required."),
@@ -35,9 +37,9 @@ export const EmployeeSchema = z.object({
     cognitoId: z.string(),
     name: z.string(),
     email: z.string().email(),
-    image: z.string().url().optional().nullable(),
+    avatarUrl: z.string().url().optional().nullable(),
     employeeCode: z.string(),
-    department: z.string(),
+    department: z.object({ name: z.string() }).optional().nullable(),
     createdAt: z.date(),
     updatedAt: z.date(),
     personalEmail: z.string().email().optional().nullable(),
@@ -55,6 +57,8 @@ export const EmployeeSchema = z.object({
     hireDate: z.date(),
     endDate: z.date().optional().nullable(),
     status: EmployeeStatus,
+    role: Role.optional().nullable(),
+    lastClockIn: z.string().optional().nullable(),
     emergencyContacts: z.array(emergencyContactSchema).optional(),
 });
 

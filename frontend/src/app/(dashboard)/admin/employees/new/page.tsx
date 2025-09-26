@@ -1,11 +1,10 @@
 "use client";
-
-import { EmployeeForm } from "@/app/(dashboard)/employees/components/employee-form";
-import { employeeFormSchema } from "@/lib/validators/employee";
 import { useToast } from "@/components/ui/use-toast";
+import { employeeFormSchema } from "@/types/prismaTypes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import * as z from "zod";
+import { EmployeeForm } from "../components/employee-form";
 
 export default function NewEmployeePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -1,6 +1,5 @@
 "use client";
 
-import { Employee, Gender, MaritalStatus } from "@/lib/validators/employee";
 import { useRouter, useParams } from "next/navigation";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -48,6 +47,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
+import { Employee } from "@/types/prismaTypes";
+import EmployeePayrollTab, { PayrollItem } from "@/components/employee/employee-payroll-tab";
+import EmployeeTasksTab, { TaskItem } from "@/components/employee/employee-tasks-tab";
+import EmployeeEbdLogsTab, { EbdLogItem } from "@/components/employee/employee-ebd-logs-tab";
+import EmployeeNotificationsTab, { NotificationItem } from "@/components/employee/employee-notifications-tab";
+import EmployeeContractsTab, { ContractItem } from "@/components/employee/employee-contracts-tab";
+import EmployeeEmergencyContactsTab, { EmergencyContactItem } from "@/components/employee/employee-emergency-contacts-tab";
+import {
+  mockPayrolls,
+  mockTasks,
+  mockEbdLogs,
+  mockNotifications,
+  mockContracts,
+  mockEmergencyContacts,
+} from "@/components/employee/employee-mock-data";
 
 // Comprehensive mock data based on the new schema
 const getEmployeeById = async (id: string): Promise<Employee> => {
@@ -56,7 +70,7 @@ const getEmployeeById = async (id: string): Promise<Employee> => {
 
   const mockEmployee: Employee = {
     id: "user-123",
-    employeeId: `emp-${id.substring(0, 4)}`,
+    cognitoId: `emp-${id.substring(0, 4)}`,
     employeeCode: `EBD-${id.substring(0, 4).toUpperCase()}`,
     name: "Ghibli Totoro",
     email: "totoro@ghibli.com",
@@ -78,13 +92,13 @@ const getEmployeeById = async (id: string): Promise<Employee> => {
     bankAccountNumber: "1234567890",
     bankName: "Forest Bank",
     position: "Forest Spirit & Mascot",
-    department: { id: "dept-1", name: "Magic & Wonder" },
+    department: { name: "Magic & Wonder" },
     hireDate: new Date("2022-08-25"),
     endDate: null,
     avatarUrl: "https://i.pravatar.cc/150?u=a042581f4e29026704d",
-    avatarFile: null,
     status: "ACTIVE",
     role: "ADMIN",
+    lastClockIn: "2025-08-28T08:00:00Z",
     contracts: [
       {
         id: "contract-1",
@@ -229,10 +243,10 @@ function EmployeeDetail() {
             <CardTitle className="text-2xl">{employee.name}</CardTitle>
             <CardDescription>{employee.position}</CardDescription>
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 pt-2 sm:justify-start">
-              <Badge variant={statusVariant}>
+              <Badge color={statusVariant}>
                 {toTitleCase(employee.status)}
               </Badge>
-              <Badge variant="outline">{toTitleCase(employee.role)}</Badge>
+              <Badge color="outline">{toTitleCase(employee.role)}</Badge>
               <div
                 className="flex items-center text-sm text-muted-foreground cursor-pointer"
                 onClick={() => handleCopy(employee.employeeCode)}
@@ -254,12 +268,14 @@ function EmployeeDetail() {
 
       {/* Tabs */}
       <Tabs defaultValue="personal" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7">
           <TabsTrigger value="personal">Personal</TabsTrigger>
-          <TabsTrigger value="contract">Contract</TabsTrigger>
+          <TabsTrigger value="contract">Contracts</TabsTrigger>
           <TabsTrigger value="payroll">Payroll</TabsTrigger>
-          <TabsTrigger value="activity">Activity Log</TabsTrigger>
-          <TabsTrigger value="emergency">Emergency</TabsTrigger>
+          <TabsTrigger value="tasks">Tasks</TabsTrigger>
+          <TabsTrigger value="ebdlogs">EBD Logs</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          <TabsTrigger value="emergency">Emergency Contacts</TabsTrigger>
         </TabsList>
 
         {/* Personal Information Tab */}
@@ -388,9 +404,7 @@ function EmployeeDetail() {
                     icon={Clock}
                     label="Last Clock In"
                     value={
-                      employee.lastClockIn
-                        ? format(new Date(employee.lastClockIn), "PPp")
-                        : "N/A"
+                      employee.lastClockIn ? format(new Date(employee.lastClockIn), "PPp") : "N/A"
                     }
                   />
                 </CardContent>
@@ -401,161 +415,32 @@ function EmployeeDetail() {
 
         {/* Contract Tab */}
         <TabsContent value="contract" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Contract Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {employee.contracts && employee.contracts.length > 0 ? (
-                employee.contracts.map((contract, index) => (
-                  <React.Fragment key={contract.id}>
-                    {index > 0 && <Separator className="my-6" />}
-                    <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2 md:grid-cols-3">
-                      <InfoItem
-                        icon={Hash}
-                        label="Contract Number"
-                        value={contract.contractNumber}
-                      />
-                      <InfoItem
-                        icon={FileText}
-                        label="Contract Type"
-                        value={toTitleCase(contract.contractType)}
-                      />
-                      <InfoItem
-                        icon={Shield}
-                        label="Status"
-                        value={
-                          <Badge
-                            variant={
-                              contract.status === "ACTIVE"
-                                ? "success"
-                                : "destructive"
-                            }
-                          >
-                            {toTitleCase(contract.status)}
-                          </Badge>
-                        }
-                      />
-                      <InfoItem
-                        icon={CalendarDays}
-                        label="Start Date"
-                        value={format(new Date(contract.startDate), "PPP")}
-                      />
-                      <InfoItem
-                        icon={CalendarDays}
-                        label="End Date"
-                        value={
-                          contract.endDate
-                            ? format(new Date(contract.endDate), "PPP")
-                            : "Ongoing"
-                        }
-                      />
-                      <InfoItem
-                        icon={Briefcase}
-                        label="Job Title"
-                        value={contract.jobTitle}
-                      />
-                      <InfoItem
-                        icon={DollarSign}
-                        label="Salary"
-                        value={`${contract.salary.toLocaleString()} ${
-                          contract.salaryCurrency
-                        }`}
-                      />
-                    </div>
-                    <div className="mt-6">
-                      <a
-                        href={contract.filePath}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Button>
-                          <FileText className="mr-2 h-4 w-4" /> View Contract
-                          File
-                        </Button>
-                      </a>
-                    </div>
-                  </React.Fragment>
-                ))
-              ) : (
-                <p>No contract information available.</p>
-              )}
-            </CardContent>
-          </Card>
+          <EmployeeContractsTab contracts={mockContracts} isAdmin={true} />
         </TabsContent>
 
         {/* Payroll Tab */}
         <TabsContent value="payroll" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Payroll History</CardTitle>
-              <CardDescription>
-                This is a placeholder for payroll history.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Payroll details will be implemented here.</p>
-            </CardContent>
-          </Card>
+          <EmployeePayrollTab payrolls={mockPayrolls} isAdmin={true} />
         </TabsContent>
 
-        {/* Activity Log Tab */}
-        <TabsContent value="activity" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Activity Log</CardTitle>
-              <CardDescription>
-                This is a placeholder for employee behavior tracking, policy
-                violations, and timelines.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Activity log details will be implemented here.</p>
-            </CardContent>
-          </Card>
+        {/* Tasks Tab */}
+        <TabsContent value="tasks" className="mt-6">
+          <EmployeeTasksTab tasks={mockTasks} isAdmin={true} />
+        </TabsContent>
+
+        {/* EBD Logs Tab */}
+        <TabsContent value="ebdlogs" className="mt-6">
+          <EmployeeEbdLogsTab ebdLogs={mockEbdLogs} isAdmin={true} />
+        </TabsContent>
+
+        {/* Notifications Tab */}
+        <TabsContent value="notifications" className="mt-6">
+          <EmployeeNotificationsTab notifications={mockNotifications} isAdmin={true} />
         </TabsContent>
 
         {/* Emergency Contacts Tab */}
         <TabsContent value="emergency" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Emergency Contacts</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {employee.emergencyContacts &&
-              employee.emergencyContacts.length > 0 ? (
-                employee.emergencyContacts.map((contact, index) => (
-                  <React.Fragment key={contact.id}>
-                    {index > 0 && <Separator className="my-6" />}
-                    <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                      <InfoItem
-                        icon={User}
-                        label="Name"
-                        value={contact.name}
-                      />
-                      <InfoItem
-                        icon={Users}
-                        label="Relationship"
-                        value={contact.relationship}
-                      />
-                      <InfoItem
-                        icon={Phone}
-                        label="Phone Number"
-                        value={contact.phoneNumber}
-                      />
-                      <InfoItem
-                        icon={Mail}
-                        label="Email"
-                        value={contact.email ?? "N/A"}
-                      />
-                    </div>
-                  </React.Fragment>
-                ))
-              ) : (
-                <p>No emergency contact information available.</p>
-              )}
-            </CardContent>
-          </Card>
+          <EmployeeEmergencyContactsTab emergencyContacts={mockEmergencyContacts} isAdmin={true} />
         </TabsContent>
       </Tabs>
     </div>
