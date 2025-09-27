@@ -1,7 +1,6 @@
 "use client";
 
 import { DataTable } from "./components/data-table";
-import { Employee } from "@/lib/validators/employee";
 import React, { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,93 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Employee } from "@/types/prismaTypes";
 
-// Mock data fetching function
-async function getData(): Promise<Employee[]> {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  // Mock data with all possible statuses and new fields
-  return [
-    {
-      id: "1",
-      employeeId: "EMP001",
-      employeeCode: "EBD001",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      personalEmail: "john.d@personal.com",
-      phoneNumber: "111-222-3333",
-      gender: "MALE",
-      dateOfBirth: new Date("1990-05-20"),
-      maritalStatus: "SINGLE",
-      nationality: "American",
-      religion: "N/A",
-      placeOfBirth: "New York, USA",
-      address: { street: "123 Main St", city: "Anytown", state: "CA", zip: "12345", country: "USA" },
-      bankAccountNumber: "111222333",
-      bankName: "Bank of Anytown",
-      position: "Software Engineer",
-      department: { id: "dept-eng", name: "Engineering" },
-      hireDate: new Date("2022-01-15"),
-      endDate: null,
-      avatarUrl: "https://i.pravatar.cc/150?u=emp001",
-      avatarFile: null,
-      status: "ACTIVE",
-      role: "EMPLOYEE",
-    },
-    {
-      id: "2",
-      employeeId: "EMP002",
-      employeeCode: "EBD002",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      personalEmail: "jane.s@personal.com",
-      phoneNumber: "444-555-6666",
-      gender: "FEMALE",
-      dateOfBirth: new Date("1988-11-30"),
-      maritalStatus: "MARRIED",
-      nationality: "British",
-      religion: "N/A",
-      placeOfBirth: "London, UK",
-      address: { street: "456 Oak Ave", city: "Someville", state: "ON", zip: "L1S 2A4", country: "Canada" },
-      bankAccountNumber: "444555666",
-      bankName: "Bank of Someville",
-      position: "Project Manager",
-      department: { id: "dept-mg", name: "Magic" },
-      hireDate: new Date("2021-03-20"),
-      endDate: null,
-      avatarUrl: "https://i.pravatar.cc/150?u=emp002",
-      avatarFile: null,
-      status: "ON_LEAVE",
-      role: "ADMIN",
-    },
-    {
-      id: "3",
-      employeeId: "EMP003",
-      employeeCode: "EBD003",
-      name: "Peter Jones",
-      email: "peter.jones@example.com",
-      personalEmail: "peter.j@personal.com",
-      phoneNumber: "777-888-9999",
-      gender: "MALE",
-      dateOfBirth: new Date("1995-02-10"),
-      maritalStatus: "SINGLE",
-      nationality: "Australian",
-      religion: "N/A",
-      placeOfBirth: "Sydney, Australia",
-      address: { street: "789 Pine Ln", city: "Metropolis", state: "NSW", zip: "2000", country: "Australia" },
-      bankAccountNumber: "777888999",
-      bankName: "Bank of Metropolis",
-      position: "UI/UX Designer",
-      department: { id: "dept-des", name: "Design" },
-      hireDate: new Date("2023-07-01"),
-      endDate: new Date("2024-01-01"),
-      avatarUrl: "https://i.pravatar.cc/150?u=emp003",
-      avatarFile: null,
-      status: "TERMINATED",
-      role: "EMPLOYEE",
-    },
-  ];
-}
+
 
 function EmployeeTableSkeleton() {
   return (
@@ -164,12 +79,16 @@ function EmployeesList() {
   const [data, setData] = React.useState<Employee[]>([]);
   const [loading, setLoading] = React.useState(true);
 
+
   React.useEffect(() => {
     setLoading(true);
-    getData().then((data) => {
-      setData(data);
-      setLoading(false);
-    });
+    fetch("/employees")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   if (loading) {
