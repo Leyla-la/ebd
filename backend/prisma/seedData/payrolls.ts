@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/frontend';
 import { faker } from '@faker-js/faker';
-import { mockPayrolls } from './employeeMockData.js';
+import { mockPayrolls } from './employeeMockData.ts';
 
 export async function seedPayrolls(prisma: PrismaClient) {
   console.log('Seeding payrolls...');
@@ -45,7 +45,15 @@ export async function seedPayrolls(prisma: PrismaClient) {
   console.log('Payrolls seeded.');
 
   console.log('Seeding payrolls from mock data...');
+  // Get all valid employee IDs from the DB
+  const validEmployeeIds = new Set(employees.map(e => e.id));
+  let skipped = 0;
   for (const p of mockPayrolls) {
+    if (!validEmployeeIds.has(p.employeeId)) {
+      console.warn(`Skipping payroll for non-existent employeeId: ${p.employeeId}`);
+      skipped++;
+      continue;
+    }
     await prisma.payroll.create({
       data: {
         employeeId: p.employeeId,
@@ -64,11 +72,27 @@ export async function seedPayrolls(prisma: PrismaClient) {
         penaltyByBehaviour: p.penaltyByBehaviour,
         netSalary: p.netSalary,
         paymentStatus: p.paymentStatus,
-        paymentDate: p.paymentDate ? new Date(p.paymentDate) : undefined,
+        paymentDate: p.paymentDate ? new Date(p.paymentDate) : null,
         autoDeducted: p.autoDeducted,
         payrollFileUrl: p.payrollFileUrl,
+        // Optional/legacy fields for compatibility (set to null, not undefined)
+        payPeriodStart: null,
+        payPeriodEnd: null,
+        payDate: p.paymentDate ? new Date(p.paymentDate) : null,
+        payRate: null,
+        payFrequency: null,
+        hoursWorked: null,
+        grossPay: null,
+        deductions: (globalThis as any).Prisma?.JsonNull ?? null,
+        bonuses: (globalThis as any).Prisma?.JsonNull ?? null,
+        netPay: null,
+        status: null,
+        paymentMethod: null,
       }
     });
+  }
+  if (skipped > 0) {
+    console.warn(`Skipped ${skipped} payroll(s) due to invalid employeeId.`);
   }
   console.log('Payrolls seeded from mock data.');
 }

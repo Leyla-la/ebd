@@ -1,3 +1,57 @@
+model Notification {
+  id         String   @id @default(cuid())
+  employeeId String?
+  employee   Employee? @relation("EmployeeNotifications", fields: [employeeId], references: [id], onDelete: Cascade)
+  adminId    String?
+  admin      Admin?    @relation("AdminNotifications", fields: [adminId], references: [id], onDelete: Cascade)
+  type       String
+  title      String
+  content    String
+  sentAt     DateTime
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([employeeId])
+  @@index([adminId])
+  @@map("notifications")
+}
+model EbdLog {
+  id          String   @id @default(cuid())
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  timestamp   DateTime
+  eventType   String
+  value       Float
+  description String?
+  severity    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([employeeId])
+  @@map("ebd_logs")
+}
+// Task model for task management
+model Task {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  type          String
+  status        String
+  deadline      DateTime?
+  completedAt   DateTime?
+  assignedToId  String?
+  assignedTo    Employee? @relation("AssignedTasks", fields: [assignedToId], references: [id])
+  assignedById  String?
+  assignedBy    Admin?    @relation("AssignedByTasks", fields: [assignedById], references: [id])
+  history       Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([assignedToId])
+  @@index([assignedById])
+  @@map("tasks")
+}
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
@@ -132,6 +186,8 @@ model Admin {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  assignedByTasks Task[] @relation("AssignedByTasks")
+  notifications   Notification[] @relation("AdminNotifications")
   @@map("admins")
 }
 
@@ -176,6 +232,10 @@ model Employee {
   points              Int                    @default(0)
   achievements        EmployeeAchievement[]
   activityConfirmations ActivityConfirmation[]
+  ebdLogs               EbdLog[]
+  notifications         Notification[] @relation("EmployeeNotifications")
+    // Tasks assigned to this employee
+    assignedTasks       Task[]                 @relation("AssignedTasks")
 
   createdAt           DateTime               @default(now())
   updatedAt           DateTime               @updatedAt
@@ -226,18 +286,38 @@ model Payroll {
   id             String        @id @default(cuid())
   employeeId     String
   employee       Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  payPeriodStart DateTime
-  payPeriodEnd   DateTime
+  // Old fields for compatibility
+  payPeriodStart DateTime?
+  payPeriodEnd   DateTime?
   payDate        DateTime?
-  payRate        Float
-  payFrequency   PayFrequency
+  payRate        Float?
+  payFrequency   PayFrequency?
   hoursWorked    Float?
-  grossPay       Float
+  grossPay       Float?
   deductions     Json?
   bonuses        Json?
-  netPay         Float
-  status         PayrollStatus @default(PENDING)
+  netPay         Float?
+  status         PayrollStatus? @default(PENDING)
   paymentMethod  String?
+  // New fields for mock/seed/frontend
+  month          String?
+  year           Int?
+  baseSalary     Float?
+  allowance      Float?
+  bonus          Float?
+  deduction      Float?
+  tax            Float?
+  kpiAttendance  Float?
+  kpiBehaviour   Float?
+  kpiPerformance Float?
+  kpiTotal       Float?
+  bonusByKPI     Float?
+  penaltyByBehaviour Float?
+  netSalary      Float?
+  paymentStatus  String?
+  autoDeducted   Boolean?
+  payrollFileUrl String?
+  paymentDate    DateTime?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -393,8 +473,8 @@ model Department {
 }
 
 model Achievement {
-  id          String                @id @default(cuid())
-  name        String                @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   description String
   points      Int
   icon        String
