@@ -1,4 +1,4 @@
-import { mockEbdLogs } from "./employeeMockData.ts";
+import { mockEbdLogs } from "./employeeMockData.js";
 
 export async function seedEbdLogs(prisma: any) {
   console.log('Seeding EBD logs from mock data...');

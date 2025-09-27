@@ -1,4 +1,4 @@
-import { mockContracts } from "./employeeMockData.ts";
+import { mockContracts } from "./employeeMockData.js";
 
 export async function seedContracts(prisma: any) {
   console.log('Seeding contracts from mock data...');
