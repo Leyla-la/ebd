@@ -19,8 +19,18 @@ export async function seedNotifications(prisma: any) {
       skipped++;
       continue;
     }
-    await prisma.notification.create({
-      data: {
+    await prisma.notification.upsert({
+      where: { id: n.id },
+      update: {
+        employeeId: n.employeeId || null,
+        adminId: n.adminId || null,
+        type: n.type,
+        title: n.title,
+        content: n.content,
+        sentAt: new Date(n.sentAt),
+        read: n.read,
+      },
+      create: {
         id: n.id,
         employeeId: n.employeeId || null,
         adminId: n.adminId || null,

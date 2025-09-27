@@ -9,12 +9,24 @@ export async function seedEmergencyContacts(prisma: PrismaClient) {
     console.log('No employees found, skipping emergency contact seeding.');
     return;
   }
-
   for (const employee of employees) {
-    await prisma.emergencyContact.create({
-      data: {
+    const name = faker.person.fullName();
+    await prisma.emergencyContact.upsert({
+      where: {
+        employeeId_name: {
+          employeeId: employee.id,
+          name: name,
+        },
+      },
+      update: {
+        relationship: faker.helpers.arrayElement(['Spouse', 'Parent', 'Sibling', 'Friend']),
+        phoneNumber: faker.phone.number(),
+        email: faker.internet.email(),
+        address: faker.location.streetAddress(true),
+      },
+      create: {
         employeeId: employee.id,
-        name: faker.person.fullName(),
+        name: name,
         relationship: faker.helpers.arrayElement(['Spouse', 'Parent', 'Sibling', 'Friend']),
         phoneNumber: faker.phone.number(),
         email: faker.internet.email(),
@@ -28,8 +40,17 @@ export async function seedEmergencyContacts(prisma: PrismaClient) {
 export async function seedEmergencyContactsFromMock(prisma: any) {
   console.log('Seeding emergency contacts from mock data...');
   for (const ec of mockEmergencyContacts) {
-    await prisma.emergencyContact.create({
-      data: {
+    await prisma.emergencyContact.upsert({
+      where: ec.id
+        ? { id: ec.id }
+        : { employeeId_name: { employeeId: ec.employeeId, name: ec.name } },
+      update: {
+        relationship: ec.relationship,
+        phoneNumber: ec.phoneNumber,
+        email: ec.email,
+        address: ec.address,
+      },
+      create: {
         id: ec.id,
         employeeId: ec.employeeId,
         name: ec.name,

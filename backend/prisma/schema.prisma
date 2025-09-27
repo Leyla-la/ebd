@@ -279,6 +279,7 @@ model EmergencyContact {
   updatedAt     DateTime @updatedAt
 
   @@index([employeeId])
+  @@unique([employeeId, name])
   @@map("emergency_contacts")
 }
 

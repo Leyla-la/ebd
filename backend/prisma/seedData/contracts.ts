@@ -3,8 +3,21 @@ import { mockContracts } from "./employeeMockData.ts";
 export async function seedContracts(prisma: any) {
   console.log('Seeding contracts from mock data...');
   for (const c of mockContracts) {
-    await prisma.contract.create({
-      data: {
+    await prisma.contract.upsert({
+      where: { id: c.id },
+      update: {
+        employeeId: c.employeeId,
+        contractNumber: c.contractNumber,
+        contractType: c.contractType,
+        status: c.status,
+        startDate: new Date(c.startDate),
+        endDate: c.endDate ? new Date(c.endDate) : undefined,
+        jobTitle: c.jobTitle,
+        salary: c.salary,
+        salaryCurrency: c.salaryCurrency,
+        filePath: c.filePath,
+      },
+      create: {
         id: c.id,
         employeeId: c.employeeId,
         contractNumber: c.contractNumber,
