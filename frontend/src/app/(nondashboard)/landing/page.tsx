@@ -7,10 +7,12 @@ import { FAQ } from "./faq";
 import { CTA } from "./cta";
 import { Hero } from "./hero";
 import { Footer } from "./footer";
+import { Navbar } from "@/components/navbar";
 
 const LandingPage = () => {
   return (
-  <div className="min-h-screen w-full bg-gradient-to-b from-green-100 via-green-50 to-green-200 text-foreground">
+    <div className="min-h-screen w-full bg-gradient-to-b from-green-100 via-green-50 to-green-200 text-foreground">
+      <Navbar />
       <main>
         <section data-aos="fade-up" data-aos-delay="0">
           <Hero />
