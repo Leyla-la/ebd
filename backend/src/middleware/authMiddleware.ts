@@ -1,6 +1,7 @@
 
 import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import type { JwtPayload } from "jsonwebtoken";
 
 interface DecodedToken extends JwtPayload {
   sub: string;
@@ -12,7 +13,7 @@ declare global {
     interface Request {
       user?: {
         id: string;
-        role: string;
+        role: string[];
       };
     }
   }
@@ -31,10 +32,12 @@ export const authMiddleware = (allowedGroups: string[]) => {
     try {
       const decoded = jwt.decode(token) as DecodedToken;
       const userGroups = decoded["cognito:groups"] || [];
+
       req.user = {
         id: decoded.sub,
-        role: userGroups[0] || "", // or store all groups if needed
+        role: userGroups, // store all groups as array
       };
+
 
       const hasAccess = userGroups.some(group =>
         allowedGroups.includes(group)
