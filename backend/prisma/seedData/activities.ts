@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedActivities(prisma: PrismaClient) {
@@ -13,9 +13,9 @@ export async function seedActivities(prisma: PrismaClient) {
   }
 
   for (let i = 0; i < 50; i++) {
-    const randomEmployee = faker.helpers.arrayElement(employees);
-    const randomDesk = faker.helpers.arrayElement(desks);
-    const randomCamera = faker.helpers.arrayElement(cameras);
+  const randomEmployee = faker.helpers.arrayElement(employees) as typeof employees[number];
+  const randomDesk = faker.helpers.arrayElement(desks) as typeof desks[number];
+  const randomCamera = faker.helpers.arrayElement(cameras) as typeof cameras[number];
     const startTime = faker.date.recent({ days: 7 });
     const endTime = new Date(startTime.getTime() + faker.number.int({ min: 5, max: 60 }) * 60 * 1000);
 

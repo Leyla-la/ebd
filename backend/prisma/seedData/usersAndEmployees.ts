@@ -1,4 +1,42 @@
-import { PrismaClient, Gender, MaritalStatus, ContractType, ContractStatus, UserRole } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
+
+
+// Enums as JS objects and string union types for ESM compatibility
+export const UserRole = {
+  ADMIN: 'ADMIN',
+  EMPLOYEE: 'EMPLOYEE',
+} as const;
+export type UserRole = typeof UserRole[keyof typeof UserRole];
+
+export const Gender = {
+  MALE: 'MALE',
+  FEMALE: 'FEMALE',
+  OTHER: 'OTHER',
+} as const;
+export type Gender = typeof Gender[keyof typeof Gender];
+
+export const MaritalStatus = {
+  SINGLE: 'SINGLE',
+  MARRIED: 'MARRIED',
+  DIVORCED: 'DIVORCED',
+  WIDOWED: 'WIDOWED',
+} as const;
+export type MaritalStatus = typeof MaritalStatus[keyof typeof MaritalStatus];
+
+export const ContractType = {
+  FULL_TIME: 'FULL_TIME',
+  PART_TIME: 'PART_TIME',
+  CONTRACTOR: 'CONTRACTOR',
+  INTERN: 'INTERN',
+} as const;
+export type ContractType = typeof ContractType[keyof typeof ContractType];
+
+export const ContractStatus = {
+  ACTIVE: 'ACTIVE',
+  EXPIRED: 'EXPIRED',
+  TERMINATED: 'TERMINATED',
+} as const;
+export type ContractStatus = typeof ContractStatus[keyof typeof ContractStatus];
 import { faker } from '@faker-js/faker';
 import * as bcrypt from 'bcrypt';
 
@@ -113,7 +151,7 @@ export async function seedUsersAndEmployees(prisma: PrismaClient) {
     const name = faker.person.fullName();
     const email = faker.internet.email();
     const password = await bcrypt.hash('password123', 10);
-    const department = faker.helpers.arrayElement(departments);
+  const department = faker.helpers.arrayElement(departments) as typeof departments[number];
 
     const user = await prisma.user.create({
       data: {

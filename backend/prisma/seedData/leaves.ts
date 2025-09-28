@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedLeaves(prisma: PrismaClient) {
@@ -10,7 +10,7 @@ export async function seedLeaves(prisma: PrismaClient) {
   }
 
   for (let i = 0; i < 15; i++) {
-    const randomEmployee = faker.helpers.arrayElement(employees);
+  const randomEmployee = faker.helpers.arrayElement(employees) as typeof employees[number];
     const startDate = faker.date.recent({ days: 30 });
     const endDate = new Date(startDate.getTime() + faker.number.int({ min: 1, max: 5 }) * 24 * 60 * 60 * 1000);
 

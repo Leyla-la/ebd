@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
-import { mockPayrolls } from './employeeMockData.js';
+import { mockPayrolls } from './employeeMockData.ts';
 
 export async function seedPayrolls(prisma: PrismaClient) {
   console.log('Seeding payrolls...');
@@ -11,7 +11,7 @@ export async function seedPayrolls(prisma: PrismaClient) {
   }
 
   for (const employee of employees) {
-    const contract = employee.contracts.find(c => c.status === 'ACTIVE');
+  const contract = employee.contracts.find((c: any) => c.status === 'ACTIVE');
     if (!contract) continue;
 
     for (let i = 1; i <= 3; i++) {
@@ -46,7 +46,7 @@ export async function seedPayrolls(prisma: PrismaClient) {
 
   console.log('Seeding payrolls from mock data...');
   // Get all valid employee IDs from the DB
-  const validEmployeeIds = new Set(employees.map(e => e.id));
+  const validEmployeeIds = new Set(employees.map((e: any) => e.id));
   let skipped = 0;
   for (const p of mockPayrolls) {
     if (!validEmployeeIds.has(p.employeeId)) {

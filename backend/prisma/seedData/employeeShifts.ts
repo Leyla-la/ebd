@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedEmployeeShifts(prisma: PrismaClient) {
@@ -13,8 +13,8 @@ export async function seedEmployeeShifts(prisma: PrismaClient) {
 
   for (const employee of employees) {
     // Assign each employee to 1 or 2 random shifts
-    const shiftsToAssign = faker.helpers.arrayElements(shifts, faker.number.int({ min: 1, max: 2 }));
-    for (const shift of shiftsToAssign) {
+  const shiftsToAssign = faker.helpers.arrayElements(shifts, faker.number.int({ min: 1, max: 2 })) as typeof shifts;
+  for (const shift of shiftsToAssign) {
       await prisma.employeeShift.upsert({
         where: { employeeId_shiftId: { employeeId: employee.id, shiftId: shift.id } },
         update: {},

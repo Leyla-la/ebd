@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedActivityConfirmations(prisma: PrismaClient) {
@@ -12,8 +12,8 @@ export async function seedActivityConfirmations(prisma: PrismaClient) {
   }
 
   for (let i = 0; i < 10; i++) {
-    const randomEmployee = faker.helpers.arrayElement(employees);
-    const randomAdmin = faker.helpers.arrayElement(admins);
+  const randomEmployee = faker.helpers.arrayElement(employees) as typeof employees[number];
+  const randomAdmin = faker.helpers.arrayElement(admins) as typeof admins[number];
     await prisma.activityConfirmation.create({
       data: {
         trackId: faker.string.uuid(),

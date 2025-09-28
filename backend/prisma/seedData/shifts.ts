@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 
 export async function seedShifts(prisma: PrismaClient) {
   console.log('Seeding shifts...');

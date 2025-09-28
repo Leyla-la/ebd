@@ -1,4 +1,4 @@
-import { mockNotifications } from "./employeeMockData.js";
+import { mockNotifications } from "./employeeMockData.ts";
 
 export async function seedNotifications(prisma: any) {
   console.log('Seeding notifications from mock data...');

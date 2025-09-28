@@ -1,4 +1,4 @@
-import { mockTasks } from "./employeeMockData.js";
+import { mockTasks } from "./employeeMockData.ts";
 
 export async function seedTasks(prisma: any) {
   console.log('Seeding tasks from mock data...');

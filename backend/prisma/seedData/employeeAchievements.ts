@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedEmployeeAchievements(prisma: PrismaClient) {
@@ -13,8 +13,8 @@ export async function seedEmployeeAchievements(prisma: PrismaClient) {
 
   for (const employee of employees) {
     // Award each employee 1 to 3 random achievements
-    const achievementsToAward = faker.helpers.arrayElements(achievements, faker.number.int({ min: 1, max: 3 }));
-    for (const achievement of achievementsToAward) {
+  const achievementsToAward = faker.helpers.arrayElements(achievements, faker.number.int({ min: 1, max: 3 })) as typeof achievements;
+  for (const achievement of achievementsToAward) {
       await prisma.employeeAchievement.upsert({
         where: { employeeId_achievementId: { employeeId: employee.id, achievementId: achievement.id } },
         update: {},

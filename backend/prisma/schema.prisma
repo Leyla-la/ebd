@@ -55,16 +55,15 @@ model Task {
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator frontend_py {
-  provider             = "prisma-client-py"
-  interface            = "asyncio"
-  recursive_type_depth = 5
-  output               = "../../../node_modules/@prisma/frontend_py"
-}
+//generator frontend_py {
+//provider             = "prisma-client-py"
+//  interface            = "asyncio"
+//  recursive_type_depth = 5
+// output               = "../../../node_modules/@prisma/client_py"
+//}
 
-generator frontend {
+generator client {
   provider = "prisma-client-js"
-  output   = "../../../node_modules/@prisma/frontend"
 }
 
 datasource db {

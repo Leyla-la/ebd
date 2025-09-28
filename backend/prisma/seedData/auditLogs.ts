@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedAuditLogs(prisma: PrismaClient) {
@@ -12,7 +12,7 @@ export async function seedAuditLogs(prisma: PrismaClient) {
   const actions = ['login', 'logout', 'create_user', 'update_policy', 'delete_employee'];
 
   for (let i = 0; i < 30; i++) {
-    const randomUser = faker.helpers.arrayElement(users);
+  const randomUser = faker.helpers.arrayElement(users) as typeof users[number];
     await prisma.auditLog.create({
       data: {
         actor: randomUser.email,
