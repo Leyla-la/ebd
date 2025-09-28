@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 
 const Tabs = TabsPrimitive.Root
 
+
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
@@ -14,9 +15,10 @@ const TabsList = React.forwardRef<
   <TabsPrimitive.List
     ref={ref}
     className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+      "inline-flex h-10 items-center justify-center rounded-md bg-white/20 backdrop-blur-[12px] p-1 text-muted-foreground border border-white/30 shadow-md",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
   />
 ))
@@ -37,6 +39,7 @@ const TabsTrigger = React.forwardRef<
 ))
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
+
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
@@ -44,9 +47,10 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+      "mt-2 rounded-lg bg-white/20 backdrop-blur-[8px] p-4 border border-white/30 shadow-inner ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     {...props}
   />
 ))

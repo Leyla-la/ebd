@@ -36,6 +36,7 @@ function MenubarSub({
   return <MenubarPrimitive.Sub data-slot="menubar-sub" {...props} />
 }
 
+
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>
@@ -43,9 +44,10 @@ const Menubar = React.forwardRef<
   <MenubarPrimitive.Root
     ref={ref}
     className={cn(
-      "flex h-10 items-center space-x-1 rounded-md border bg-background p-1",
+      "flex h-10 items-center space-x-1 rounded-md border border-white/30 bg-white/20 p-1 backdrop-blur-[12px] shadow-md",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
   />
 ))
@@ -87,6 +89,7 @@ const MenubarSubTrigger = React.forwardRef<
 ))
 MenubarSubTrigger.displayName = MenubarPrimitive.SubTrigger.displayName
 
+
 const MenubarSubContent = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.SubContent>
@@ -94,13 +97,15 @@ const MenubarSubContent = React.forwardRef<
   <MenubarPrimitive.SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+      "z-50 min-w-[8rem] overflow-hidden rounded-md border border-white/30 bg-white/20 p-1 text-popover-foreground backdrop-blur-[12px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
   />
 ))
 MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName
+
 
 const MenubarContent = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Content>,
@@ -117,9 +122,10 @@ const MenubarContent = React.forwardRef<
         alignOffset={alignOffset}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-[12rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+          "z-50 min-w-[12rem] overflow-hidden rounded-md border border-white/30 bg-white/20 p-1 text-popover-foreground shadow-md backdrop-blur-[12px] data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
           className
         )}
+        style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
         {...props}
       />
     </MenubarPrimitive.Portal>

@@ -2,11 +2,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div
+    className="relative w-full overflow-auto rounded-xl bg-white/20 backdrop-blur-[12px] border border-white/30 shadow-md"
+    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
+  >
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}
@@ -51,6 +55,7 @@ const TableFooter = React.forwardRef<
 ))
 TableFooter.displayName = "TableFooter"
 
+
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
@@ -58,9 +63,10 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+      "border-b transition-colors hover:bg-white/30 hover:backdrop-blur-[8px] data-[state=selected]:bg-white/40 data-[state=selected]:backdrop-blur-[8px]",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     {...props}
   />
 ))

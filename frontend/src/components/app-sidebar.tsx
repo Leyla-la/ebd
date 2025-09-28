@@ -12,7 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +20,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/components/ui/sidebar";
+import LiquidGlass from "liquid-glass-react";
 
 const navItems = [
   { href: "/", label: "Dashboard", icon: Home },
@@ -35,9 +36,16 @@ export function AppSidebar() {
   const { isOpen } = useSidebar();
 
   return (
-    <aside
+    <LiquidGlass
+      displacementScale={70}
+      blurAmount={0.09}
+      saturation={170}
+      elasticity={0.18}
+      mode="prominent"
+      cornerRadius={0}
+      style={{ height: "100vh", position: "relative" }}
       className={cn(
-        "h-screen border-r bg-background transition-all",
+        "border-r border-white/30 shadow-lg transition-all",
         isOpen ? "w-64" : "w-20"
       )}
     >
@@ -50,8 +58,7 @@ export function AppSidebar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      buttonVariants({ variant: "ghost" }),
-                      "w-full justify-start",
+                      "w-full justify-start bg-white/10 hover:bg-white/20 transition-colors rounded-md border border-white/20",
                       !isOpen && "justify-center"
                     )}
                   >
@@ -75,8 +82,7 @@ export function AppSidebar() {
                 <Link
                   href="/settings"
                   className={cn(
-                    buttonVariants({ variant: "ghost" }),
-                    "w-full justify-start",
+                    "w-full justify-start bg-white/10 hover:bg-white/20 transition-colors rounded-md border border-white/20",
                     !isOpen && "justify-center"
                   )}
                 >
@@ -93,6 +99,6 @@ export function AppSidebar() {
           </TooltipProvider>
         </nav>
       </div>
-    </aside>
+    </LiquidGlass>
   );
 }

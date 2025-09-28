@@ -8,13 +8,19 @@ import { cn } from "@/lib/utils"
 
 const Accordion = AccordionPrimitive.Root
 
+
+// Glassmorphism AccordionItem
 const AccordionItem = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Item>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
 >(({ className, ...props }, ref) => (
   <AccordionPrimitive.Item
     ref={ref}
-    className={cn("border-b", className)}
+    className={cn(
+      "border-b bg-white/20 backdrop-blur-[12px] rounded-lg my-2 shadow-md",
+      className
+    )}
+    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
   />
 ))
@@ -40,6 +46,7 @@ const AccordionTrigger = React.forwardRef<
 ))
 AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
 
+
 const AccordionContent = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
@@ -49,7 +56,15 @@ const AccordionContent = React.forwardRef<
     className="overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
     {...props}
   >
-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+    <div
+      className={cn(
+        "pb-4 pt-0 bg-white/30 backdrop-blur-[8px] rounded-lg shadow-inner",
+        className
+      )}
+      style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
+    >
+      {children}
+    </div>
   </AccordionPrimitive.Content>
 ))
 

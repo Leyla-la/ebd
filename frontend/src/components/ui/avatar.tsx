@@ -5,6 +5,7 @@ import * as AvatarPrimitive from "@radix-ui/react-avatar"
 
 import { cn } from "@/lib/utils"
 
+
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
@@ -12,9 +13,10 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
+      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/20 backdrop-blur-[8px] border border-white/30 shadow-md",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     {...props}
   />
 ))
@@ -32,6 +34,7 @@ const AvatarImage = React.forwardRef<
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
+
 const AvatarFallback = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Fallback>,
   React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
@@ -39,9 +42,10 @@ const AvatarFallback = React.forwardRef<
   <AvatarPrimitive.Fallback
     ref={ref}
     className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
+      "flex h-full w-full items-center justify-center rounded-full bg-white/30 text-black/70 dark:text-white/80",
       className
     )}
+    style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     {...props}
   />
 ))
