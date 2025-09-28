@@ -15,7 +15,7 @@ export default async function DashboardLayout({
     <SidebarProvider defaultOpen={defaultOpen}>
       <div className='relative flex min-h-screen flex-col'>
         <Navbar />
-        <div className='flex-1'>
+        <div className='flex-1' style={{ paddingTop: '60px' }}>
           <div className='flex h-full'>
             <AppSidebar />
             <main className='flex-1 overflow-y-auto p-8'>

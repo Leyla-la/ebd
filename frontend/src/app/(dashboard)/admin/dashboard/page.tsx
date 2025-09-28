@@ -17,7 +17,7 @@ import { useState } from "react";
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<DashboardTabKey>("overview");
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-0 md:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-0 md:p-6" style={{ paddingTop: '60px' }}>
       <main className="max-w-[1600px] mx-auto px-2 md:px-8 py-6">
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
           <div>

@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname, useRouter } from "next/navigation";
+
 import { useGetAuthUserQuery } from "@/state/api";
 import type { AuthenticatedUser } from "@/types/prismaTypes";
 import { signOut } from "@aws-amplify/auth";
@@ -26,6 +27,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/state/store";
+import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { markAllAsRead, markAsRead } from "@/state/notificationSlice";
 
 
 // Placeholder icons for theme/language
@@ -74,7 +80,10 @@ export function Navbar() {
     }
   };
 
-  // Always show the same navbar structure
+  // Notification state
+  const { unreadCount, notifications } = useSelector((state: RootState) => state.notification);
+  const dispatch = useDispatch();
+
   return (
     <header
       className={cn(
@@ -89,12 +98,54 @@ export function Navbar() {
       </Link>
       {/* Right: Auth-dependent */}
       <div className='flex items-center gap-2'>
-        {/* Notification icon (only if logged in) */}
+        {/* Notification icon and dropdown (only if logged in) */}
         {user && (
-          <Link href='/notifications' className='relative'>
-            <Bell className='h-6 w-6 text-muted-foreground hover:text-foreground' />
-            {/* TODO: Add badge for unread count */}
-          </Link>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className='relative focus:outline-none'>
+                <Bell className='h-6 w-6 text-muted-foreground hover:text-foreground' />
+                {unreadCount > 0 && (
+                  <Badge variant='destructive' className='absolute -top-1 -right-1 px-1.5 py-0.5 text-xs'>{unreadCount}</Badge>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent align='end' className='w-80 p-0'>
+              <div className='max-h-80 overflow-y-auto'>
+                <div className='flex items-center justify-between px-4 py-2 border-b'>
+                  <span className='font-semibold'>Notifications</span>
+                  {unreadCount > 0 && (
+                    <button
+                      className='text-xs text-blue-600 hover:underline ml-2'
+                      onClick={() => dispatch(markAllAsRead())}
+                    >Mark all as read</button>
+                  )}
+                </div>
+                {notifications.length === 0 ? (
+                  <div className='p-4 text-sm text-muted-foreground'>No notifications</div>
+                ) : (
+                  <ul className='divide-y'>
+                    {notifications.slice(0, 10).map((n) => (
+                      <li
+                        key={n.id}
+                        className={cn('px-4 py-2 flex flex-col gap-0.5 cursor-pointer', !n.read && 'bg-accent/30')}
+                        onClick={() => !n.read && dispatch(markAsRead(n.id))}
+                      >
+                        <div className='flex items-center gap-2'>
+                          <span className={cn('font-medium', !n.read && 'text-primary')}>{n.title}</span>
+                          {!n.read && <Badge variant='warning' className='ml-2'>New</Badge>}
+                        </div>
+                        <span className='text-xs text-muted-foreground'>{n.content}</span>
+                        <span className='text-xs text-gray-400'>{new Date(n.sentAt).toLocaleString()}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className='px-4 py-2 border-t text-xs text-center'>
+                  <Link href='/notifications' className='text-blue-600 hover:underline'>View all</Link>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         )}
         {/* Theme icon (placeholder) */}
         <Button variant='ghost' size='icon' className='rounded-full' title='Change theme (coming soon)'>
