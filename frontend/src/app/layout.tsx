@@ -1,9 +1,11 @@
+
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import AOSProvider from "./AOSProvider";
 import AuthProvider from "./(auth)/auth-provider";
+import NotificationListener from "@/components/NotificationListener";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,6 +13,7 @@ export const metadata: Metadata = {
   title: "EBD Corp",
   description: "Employee Behavior Detection System",
 };
+
 
 export default function RootLayout({
   children,
@@ -22,6 +25,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <StoreProvider>
           <AuthProvider>
+            <NotificationListener />
             <AOSProvider>{children}</AOSProvider>
           </AuthProvider>
         </StoreProvider>
