@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 import { Server } from 'socket.io';
-import { emitNotificationToUser } from '../sockets/notification.js';
+import { emitNotificationToUser } from '../sockets/notification.ts';
 
 const prisma = new PrismaClient();
 

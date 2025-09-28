@@ -1,20 +1,22 @@
 import express from "express";
+console.log('=== Express app started ===');
 import { createServer } from "http";
 import { Server as IOServer } from "socket.io";
-import { registerNotificationSocket } from "./sockets/notification.js";
+import { registerNotificationSocket } from "./sockets/notification.ts";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import authRoutes from './routes/auth.js';
-import employeeRoutes from './routes/employee.js';
-import payrollRoutes from './routes/payroll.js';
-import taskRoutes from './routes/task.js';
-import ebdLogRoutes from './routes/ebdLog.js'; // Importing ebdLog routes
-import notificationRoutes from './routes/notification.js'; // Importing notification routes
-import contractRoutes from './routes/contract.js'; // Importing contract routes
-import emergencyContactRoutes from './routes/emergencyContact.js'; // Importing emergencyContact routes
+import authRoutes from './routes/auth.ts';
+import employeeRoutes from './routes/employee.ts';
+import userRoutes from './routes/user.ts';
+import payrollRoutes from './routes/payroll.ts';
+import taskRoutes from './routes/task.ts';
+import ebdLogRoutes from './routes/ebdLog.ts'; // Importing ebdLog routes
+import notificationRoutes from './routes/notification.ts'; // Importing notification routes
+import contractRoutes from './routes/contract.ts'; // Importing contract routes
+import emergencyContactRoutes from './routes/emergencyContact.ts'; // Importing emergencyContact routes
 
 // CONFIGURATION
 dotenv.config();
@@ -44,19 +46,13 @@ app.get("/", (req, res) => {
 
 
 app.use("/employees", employeeRoutes);
+app.use("/users", userRoutes);
 app.use("/payrolls", payrollRoutes);
 app.use("/tasks", taskRoutes);
 app.use("/ebd-logs", ebdLogRoutes); // Registering ebdLog route
 app.use("/notifications", notificationRoutes); // Registering notification route
 app.use("/contracts", contractRoutes); // Registering contract route
 app.use("/emergency-contacts", emergencyContactRoutes); // Registering emergencyContact route
-
-// app.use("/applications", applicationRoutes);
-// app.use("/properties", propertyRoutes);
-// app.use("/leases", leaseRoutes);
-// app.use("/tenants", authMiddleware(["tenant"]), tenantRoutes);
-// app.use("/managers", authMiddleware(["manager"]), managerRoutes);
-
 
 
 // SERVER

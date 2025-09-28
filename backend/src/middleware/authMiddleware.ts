@@ -1,5 +1,8 @@
 
-import { Request, Response, NextFunction } from "express";
+import express from "express";
+type Request = express.Request;
+type Response = express.Response;
+type NextFunction = express.NextFunction;
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 
@@ -22,6 +25,7 @@ declare global {
 // ...existing code...
 export const authMiddleware = (allowedGroups: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
+    console.log('=== Middleware hit ===', req.method, req.originalUrl);
     const token = req.headers.authorization?.split(" ")[1];
 
     if (!token) {
