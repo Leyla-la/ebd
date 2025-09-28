@@ -9,14 +9,8 @@ import EmployeeEbdLogsTab from "@/components/employee/employee-ebd-logs-tab";
 import EmployeeNotificationsTab from "@/components/employee/employee-notifications-tab";
 import EmployeeContractsTab from "@/components/employee/employee-contracts-tab";
 import EmployeeEmergencyContactsTab from "@/components/employee/employee-emergency-contacts-tab";
-import {
-  mockPayrolls,
-  mockTasks,
-  mockEbdLogs,
-  mockNotifications,
-  mockContracts,
-  mockEmergencyContacts,
-} from "@/components/employee/employee-mock-data";
+
+
 
 export default function EmployeeDetailPage() {
   return (
@@ -37,22 +31,22 @@ export default function EmployeeDetailPage() {
           <TabsTrigger value="emergency">Emergency Contacts</TabsTrigger>
         </TabsList>
         <TabsContent value="contract" className="mt-6">
-          <EmployeeContractsTab contracts={mockContracts} />
+          <EmployeeContractsTab contracts={[]} />
         </TabsContent>
         <TabsContent value="payroll" className="mt-6">
-          <EmployeePayrollTab payrolls={mockPayrolls} />
+          <EmployeePayrollTab payrolls={[]} />
         </TabsContent>
         <TabsContent value="tasks" className="mt-6">
-          <EmployeeTasksTab tasks={mockTasks} />
+          <EmployeeTasksTab tasks={[]} />
         </TabsContent>
         <TabsContent value="ebdlogs" className="mt-6">
-          <EmployeeEbdLogsTab ebdLogs={mockEbdLogs} />
+          <EmployeeEbdLogsTab ebdLogs={[]} />
         </TabsContent>
         <TabsContent value="notifications" className="mt-6">
-          <EmployeeNotificationsTab notifications={mockNotifications} />
+          <EmployeeNotificationsTab notifications={[]} />
         </TabsContent>
         <TabsContent value="emergency" className="mt-6">
-          <EmployeeEmergencyContactsTab emergencyContacts={mockEmergencyContacts} />
+          <EmployeeEmergencyContactsTab emergencyContacts={[]} />
         </TabsContent>
       </Tabs>
     </div>

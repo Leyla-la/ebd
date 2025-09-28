@@ -16,6 +16,7 @@ import { Employee } from "@/types/prismaTypes";
 
 
 
+
 function EmployeeTableSkeleton() {
   return (
     <div className="space-y-4">
@@ -75,27 +76,14 @@ function EmployeeTableSkeleton() {
   );
 }
 
+
+import { useGetEmployeesQuery } from "@/state/api";
+
 function EmployeesList() {
-  const [data, setData] = React.useState<Employee[]>([]);
-  const [loading, setLoading] = React.useState(true);
-
-
-  React.useEffect(() => {
-    setLoading(true);
-    fetch("/employees")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  if (loading) {
-    return <EmployeeTableSkeleton />;
-  }
-
-  return <DataTable data={data} />;
+  const { data, isLoading, isError } = useGetEmployeesQuery();
+  if (isLoading) return <EmployeeTableSkeleton />;
+  if (isError) return <div className="text-red-500">Failed to load employees.</div>;
+  return <DataTable data={data || []} />;
 }
 
 export default function EmployeesPage() {

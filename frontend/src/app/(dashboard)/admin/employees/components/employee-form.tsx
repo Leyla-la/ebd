@@ -26,7 +26,6 @@ import {
   EmployeeFormValues,
   Gender,
   MaritalStatus,
-} from "@/lib/validators/employee";
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

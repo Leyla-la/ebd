@@ -43,7 +43,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { columns } from "./columns";
-import { Employee } from "@/lib/validators/employee";
+import { Employee } from "@/types/prismaTypes";
 
 interface DataTableProps {
   data: Employee[];
@@ -168,7 +168,7 @@ export function DataTable({ data }: DataTableProps) {
             </AlertDialogContent>
           </AlertDialog>
           <Button
-            onClick={() => router.push("/employees/new")}
+            onClick={() => router.push("employees/new")}
             size="sm"
             className="cursor-pointer"
           >

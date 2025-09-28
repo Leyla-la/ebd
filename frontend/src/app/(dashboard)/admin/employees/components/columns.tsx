@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Employee } from "@/lib/validators/employee";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,6 +37,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import { Employee } from "@/types/prismaTypes";
 
 export const columns: ColumnDef<Employee>[] = [
   {
@@ -163,14 +163,14 @@ export const columns: ColumnDef<Employee>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => router.push(`admin/employees/${employee.id}`)}
+                onClick={() => router.push(`employees/${employee.id}`)}
                 className="cursor-pointer"
               >
                 <Eye className="mr-2 h-4 w-4" />
                 View details
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => router.push(`admin/employees/${employee.id}/edit`)}
+                onClick={() => router.push(`employees/${employee.id}/edit`)}
                 className="cursor-pointer"
               >
                 <Pencil className="mr-2 h-4 w-4" />
