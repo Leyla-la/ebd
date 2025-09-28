@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.ts";
 import {
   getAllPayrolls,
   getPayrollById,
   createPayroll,
   updatePayroll,
   deletePayroll
-} from "../controllers/payrollController.js";
+} from "../controllers/payrollController.ts";
 
 const router = Router();
 

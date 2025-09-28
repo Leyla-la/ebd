@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.ts";
 import {
   getAllContracts,
   getContractById,
   createContract,
   updateContract,
   deleteContract
-} from "../controllers/contractController.js";
+} from "../controllers/contractController.ts";
 
 const router = Router();
 

@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import express from 'express';
+type Request = express.Request;
+type Response = express.Response;
 
 export const getEmployeeById = async (req: Request, res: Response) => {
   try {
@@ -30,7 +32,7 @@ export const getEmployeeById = async (req: Request, res: Response) => {
   }
 };
 
-import { PrismaClient } from '@prisma/frontend';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 

@@ -1,4 +1,6 @@
-import { Request, Response } from 'express';
+import express from 'express';
+type Request = express.Request;
+type Response = express.Response;
 
 // This is a placeholder for where you would handle a login request.
 // In a real Cognito setup, the frontend handles the direct sign-in with Cognito.

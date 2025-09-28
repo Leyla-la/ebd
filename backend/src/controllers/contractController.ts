@@ -1,5 +1,7 @@
-import { PrismaClient } from '@prisma/frontend';
-import { Request, Response } from 'express';
+import { PrismaClient } from '@prisma/client';
+import express from 'express';
+type Request = express.Request;
+type Response = express.Response;
 
 const prisma = new PrismaClient();
 

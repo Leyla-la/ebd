@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { authMiddleware } from "../middleware/authMiddleware.ts";
 import {
   getAllEmergencyContacts,
   getEmergencyContactById,
   createEmergencyContact,
   updateEmergencyContact,
   deleteEmergencyContact
-} from "../controllers/emergencyContactController.js";
+} from "../controllers/emergencyContactController.ts";
 
 const router = Router();
 
