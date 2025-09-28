@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   CircleUser,
   Bell,
@@ -65,6 +66,14 @@ const getDropdownItems = (role: string) => {
 export function Navbar() {
   const pathname = usePathname();
   const { data: user, isLoading } = useGetAuthUserQuery();
+  // Debug: log user info after redirect to dashboard
+  React.useEffect(() => {
+    if (user) {
+      console.log("[Navbar] Authenticated user:", user);
+      // You can check if user exists in DB here
+      // Optionally, fetch again or show a warning if not found
+    }
+  }, [user]);
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -98,7 +107,7 @@ export function Navbar() {
       </Link>
       {/* Right: Auth-dependent */}
       <div className='flex items-center gap-2'>
-        {/* Notification icon and dropdown (only if logged in) */}
+        {/* Notification icon and dropdown (always show if logged in) */}
         {user && (
           <Popover>
             <PopoverTrigger asChild>
@@ -181,8 +190,16 @@ export function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>
+                <div className="flex flex-col">
+                  <span className="font-semibold">{user.admin?.name || user.employee?.name}</span>
+                  <span className="text-xs text-muted-foreground">{user.role}</span>
+                </div>
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/profile">Profile</Link>
+              </DropdownMenuItem>
               {getDropdownItems(user.role).map((item) => (
                 <DropdownMenuItem asChild key={item.href}>
                   <Link href={item.href}>{item.label}</Link>
@@ -200,5 +217,6 @@ export function Navbar() {
       </div>
     </header>
   );
+// NOTE: If you want to use other AWS services for user/session storage (like Redis, DynamoDB, etc.), you can implement a custom session/user store in your backend and update the frontend API calls accordingly. Cognito is easiest for managed auth, but Redis/DynamoDB can be used for custom logic or caching.
 }
 
