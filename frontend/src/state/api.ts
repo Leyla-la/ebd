@@ -51,53 +51,46 @@ export const api = createApi({
   ],
   endpoints: (builder) => ({
     getAuthUser: builder.query<AuthenticatedUser | null, void>({
-      queryFn: async (_, { signal }) => {
+      async queryFn(_, { signal }) {
         try {
           const session = await fetchAuthSession();
           const idToken = session.tokens?.idToken?.toString();
-
           if (!idToken) {
-            return { data: null };
+            return { error: { status: 401, data: { message: 'No idToken found in session. User is not authenticated.' } } };
           }
-
           const payload = parseJwt(idToken);
-
           if (!payload) {
-            return { data: null };
+            return { error: { status: 400, data: { message: 'Failed to parse idToken payload.' } } };
           }
-
           const cognitoId = payload.sub;
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/cognito/${cognitoId}`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/cognito/${cognitoId}`,
             {
-              headers: {
-                Authorization: `Bearer ${idToken}`,
-              },
-              signal, // Pass the signal to the fetch request
-            },
-          );
-
-          if (!response.ok) {
-            if (response.status === 404) {
-              console.warn(
-                `User with cognitoId ${cognitoId} not found in the database.`,
-              );
-            } else {
-              console.error(
-                `Failed to fetch user info with status: ${response.status}`,
-              );
+              headers: { Authorization: `Bearer ${idToken}` },
+              signal,
             }
-            return { data: null };
+          );
+          if (!response.ok) {
+            let errorMsg = `Failed to fetch user info. Status: ${response.status}`;
+            let errorDetails = '';
+            try {
+              const errorJson = await response.json();
+              errorDetails = errorJson?.error || JSON.stringify(errorJson);
+            } catch (e) {
+              errorDetails = '[getAuthUser] Could not parse error response JSON.';
+            }
+            if (response.status === 404) {
+              errorMsg = `User with cognitoId ${cognitoId} not found in the database.`;
+            }
+            return { error: { status: response.status, data: { message: errorMsg, details: errorDetails } } };
           }
-
           const userInfo: AuthenticatedUser = await response.json();
-
           return { data: userInfo };
         } catch (error) {
           if ((error as Error).name !== 'AbortError') {
-            console.error('Error in getAuthUser:', error);
+            console.error('[getAuthUser] Unexpected error:', error);
           }
-          return { data: null };
+          return { error: { status: 500, data: { message: '[getAuthUser] Unexpected error', details: (error as Error).message } } };
         }
       },
       providesTags: ['User'],
