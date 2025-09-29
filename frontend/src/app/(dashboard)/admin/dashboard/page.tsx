@@ -17,16 +17,22 @@ import { useState } from "react";
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<DashboardTabKey>("overview");
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-0 md:p-6" style={{ paddingTop: '60px' }}>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 p-0 md:p-6 relative" style={{ paddingTop: '60px' }}>
+      <span className="liquid-glass-shine" aria-hidden="true" />
       <main className="max-w-[1600px] mx-auto px-2 md:px-8 py-6">
-        <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+        <header className="liquid-glass-card flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 px-6 py-4 rounded-2xl shadow-xl relative overflow-hidden">
+          <span className="liquid-glass-shine" aria-hidden="true" />
           <div>
             <h1 className="text-4xl font-extrabold text-green-700 tracking-tight drop-shadow-sm">Admin Dashboard</h1>
             <p className="text-muted-foreground mt-2 text-lg">Employee Behavior Detection System (EBD)</p>
           </div>
           <div className="flex gap-2">
-            <button className="border border-green-600 text-green-700 hover:bg-green-50 transition rounded px-4 py-2 font-semibold shadow-sm">Export CSV</button>
-            <button className="border border-blue-600 text-blue-700 hover:bg-blue-50 transition rounded px-4 py-2 font-semibold shadow-sm">Export PDF</button>
+            <button className="liquid-glass-card border border-green-600 text-green-700 hover:bg-green-100/30 transition rounded-xl px-4 py-2 font-semibold shadow-sm relative overflow-hidden">
+              <span className="liquid-glass-shine" aria-hidden="true" />Export CSV
+            </button>
+            <button className="liquid-glass-card border border-blue-600 text-blue-700 hover:bg-blue-100/30 transition rounded-xl px-4 py-2 font-semibold shadow-sm relative overflow-hidden">
+              <span className="liquid-glass-shine" aria-hidden="true" />Export PDF
+            </button>
           </div>
         </header>
 
@@ -36,28 +42,32 @@ export default function AdminDashboardPage() {
           <>
             {/* Horizontal Scrollable KPI Cards */}
             <section className="flex gap-6 overflow-x-auto pb-4 mb-8 hide-scrollbar">
-              <div className="min-w-[220px] bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein">
+              <div className="liquid-glass-card min-w-[220px] rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein relative overflow-hidden">
+                <span className="liquid-glass-shine" aria-hidden="true" />
                 <FaUsers className="text-green-600 text-3xl" />
                 <div>
                   <div className="text-2xl font-extrabold">1,250</div>
                   <div className="text-xs text-gray-500">Total Employees</div>
                 </div>
               </div>
-              <div className="min-w-[220px] bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein">
+              <div className="liquid-glass-card min-w-[220px] rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein relative overflow-hidden">
+                <span className="liquid-glass-shine" aria-hidden="true" />
                 <FaChartLine className="text-blue-600 text-3xl" />
                 <div>
                   <div className="text-2xl font-extrabold">92%</div>
                   <div className="text-xs text-gray-500">Avg. Attendance Rate</div>
                 </div>
               </div>
-              <div className="min-w-[220px] bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein">
+              <div className="liquid-glass-card min-w-[220px] rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein relative overflow-hidden">
+                <span className="liquid-glass-shine" aria-hidden="true" />
                 <FaExclamationTriangle className="text-yellow-600 text-3xl" />
                 <div>
                   <div className="text-2xl font-extrabold">7</div>
                   <div className="text-xs text-gray-500">Active Alerts</div>
                 </div>
               </div>
-              <div className="min-w-[220px] bg-white rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein">
+              <div className="liquid-glass-card min-w-[220px] rounded-2xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-transform cursor-pointer animate-fadein relative overflow-hidden">
+                <span className="liquid-glass-shine" aria-hidden="true" />
                 <FaMoneyBillWave className="text-green-700 text-3xl" />
                 <div>
                   <div className="text-2xl font-extrabold">$1.2M</div>

@@ -47,18 +47,21 @@ export const SidebarProvider = ({
 const Sidebar = React.forwardRef<
   HTMLElement,
   React.HTMLAttributes<HTMLElement>
->(({ className, ...props }, ref) => {
+>(({ className, children, ...props }, ref) => {
   const { isOpen } = useSidebar()
   return (
     <aside
       ref={ref}
       className={cn(
-        "h-full border-r bg-background transition-all duration-300",
+        "liquid-glass-sidebar h-full transition-all duration-300 relative overflow-hidden",
         isOpen ? "w-64" : "w-20",
         className
       )}
       {...props}
-    />
+    >
+      <span className="liquid-glass-shine" aria-hidden="true" />
+      <div className="relative z-10 h-full">{children}</div>
+    </aside>
   )
 })
 Sidebar.displayName = "Sidebar"
@@ -106,7 +109,7 @@ const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       onClick={toggleSidebar}
-      className={cn("rounded-full", className)}
+      className={cn("", className)}
       {...props}
     >
       <ChevronLeft

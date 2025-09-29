@@ -20,10 +20,11 @@ interface EmployeeContractsTabProps {
 
 const EmployeeContractsTab: React.FC<EmployeeContractsTabProps> = ({ contracts, isAdmin }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
+    <div className="liquid-glass-card overflow-x-auto p-4 relative">
+      <span className="liquid-glass-shine" aria-hidden="true" />
+      <table className="min-w-full border text-sm bg-white/10 rounded-xl overflow-hidden relative z-10">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-white/20">
             <th>Contract #</th>
             <th>Type</th>
             <th>Status</th>
@@ -36,7 +37,7 @@ const EmployeeContractsTab: React.FC<EmployeeContractsTabProps> = ({ contracts, 
         </thead>
         <tbody>
           {contracts.map((c) => (
-            <tr key={c.id} className="border-b">
+            <tr key={c.id} className="border-b border-white/20">
               <td>{c.contractNumber}</td>
               <td>{c.contractType}</td>
               <td>{c.status}</td>
@@ -54,7 +55,7 @@ const EmployeeContractsTab: React.FC<EmployeeContractsTabProps> = ({ contracts, 
         </tbody>
       </table>
       {isAdmin && (
-        <div className="mt-4 text-xs text-gray-500">* Admin có thể upload, chỉnh sửa hợp đồng tại đây (tùy UI thực tế).</div>
+        <div className="mt-4 text-xs text-gray-500 relative z-10">* Admin có thể upload, chỉnh sửa hợp đồng tại đây (tùy UI thực tế).</div>
       )}
     </div>
   );

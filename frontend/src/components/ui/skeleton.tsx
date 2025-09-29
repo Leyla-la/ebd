@@ -8,12 +8,13 @@ function Skeleton({
   return (
     <div
       className={cn(
-        "animate-pulse rounded-md bg-white/30 backdrop-blur-[8px] border border-white/30 shadow-inner",
+        "liquid-glass-card animate-pulse rounded-md",
         className
       )}
-      style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
       {...props}
-    />
+    >
+      <span className="liquid-glass-shine" aria-hidden="true" />
+    </div>
   )
 }
 

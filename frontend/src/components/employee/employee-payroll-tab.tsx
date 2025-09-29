@@ -30,10 +30,11 @@ interface EmployeePayrollTabProps {
 
 const EmployeePayrollTab: React.FC<EmployeePayrollTabProps> = ({ payrolls, isAdmin }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
+    <div className="liquid-glass-card overflow-x-auto p-4 relative">
+      <span className="liquid-glass-shine" aria-hidden="true" />
+      <table className="min-w-full border text-sm bg-white/10 rounded-xl overflow-hidden relative z-10">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-white/20">
             <th>Month</th>
             <th>Base Salary</th>
             <th>Allowance</th>
@@ -54,7 +55,7 @@ const EmployeePayrollTab: React.FC<EmployeePayrollTabProps> = ({ payrolls, isAdm
         </thead>
         <tbody>
           {payrolls.map((p) => (
-            <tr key={p.id} className="border-b">
+            <tr key={p.id} className="border-b border-white/20">
               <td>{p.month}/{p.year}</td>
               <td>{p.baseSalary.toLocaleString()}</td>
               <td>{p.allowance.toLocaleString()}</td>
@@ -80,7 +81,7 @@ const EmployeePayrollTab: React.FC<EmployeePayrollTabProps> = ({ payrolls, isAdm
         </tbody>
       </table>
       {isAdmin && (
-        <div className="mt-4 text-xs text-gray-500">* Admin có thể xuất, xác nhận, gửi phiếu lương tại đây (tùy UI thực tế).</div>
+        <div className="mt-4 text-xs text-gray-500 relative z-10">* Admin có thể xuất, xác nhận, gửi phiếu lương tại đây (tùy UI thực tế).</div>
       )}
     </div>
   );

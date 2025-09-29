@@ -13,12 +13,14 @@ const Avatar = React.forwardRef<
   <AvatarPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/20 backdrop-blur-[8px] border border-white/30 shadow-md",
+      "liquid-glass-avatar relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
       className
     )}
-    style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     {...props}
-  />
+  >
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    {props.children}
+  </AvatarPrimitive.Root>
 ))
 Avatar.displayName = AvatarPrimitive.Root.displayName
 

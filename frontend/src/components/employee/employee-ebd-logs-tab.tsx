@@ -16,10 +16,11 @@ interface EmployeeEbdLogsTabProps {
 
 const EmployeeEbdLogsTab: React.FC<EmployeeEbdLogsTabProps> = ({ ebdLogs, isAdmin }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
+    <div className="liquid-glass-card overflow-x-auto p-4 relative">
+      <span className="liquid-glass-shine" aria-hidden="true" />
+      <table className="min-w-full border text-sm bg-white/10 rounded-xl overflow-hidden relative z-10">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-white/20">
             <th>Time</th>
             <th>Event</th>
             <th>Value</th>
@@ -29,7 +30,7 @@ const EmployeeEbdLogsTab: React.FC<EmployeeEbdLogsTabProps> = ({ ebdLogs, isAdmi
         </thead>
         <tbody>
           {ebdLogs.map((log) => (
-            <tr key={log.id} className="border-b">
+            <tr key={log.id} className="border-b border-white/20">
               <td>{new Date(log.timestamp).toLocaleString()}</td>
               <td>{log.eventType}</td>
               <td>{log.value}</td>
@@ -40,7 +41,7 @@ const EmployeeEbdLogsTab: React.FC<EmployeeEbdLogsTabProps> = ({ ebdLogs, isAdmi
         </tbody>
       </table>
       {isAdmin && (
-        <div className="mt-4 text-xs text-gray-500">* Admin có thể xem/sửa log hành vi tại đây (tùy UI thực tế).</div>
+        <div className="mt-4 text-xs text-gray-500 relative z-10">* Admin có thể xem/sửa log hành vi tại đây (tùy UI thực tế).</div>
       )}
     </div>
   );

@@ -17,12 +17,14 @@ const AccordionItem = React.forwardRef<
   <AccordionPrimitive.Item
     ref={ref}
     className={cn(
-      "border-b bg-white/20 backdrop-blur-[12px] rounded-lg my-2 shadow-md",
+      "liquid-glass-accordion border-b my-2",
       className
     )}
-    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
-  />
+  >
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    {props.children}
+  </AccordionPrimitive.Item>
 ))
 AccordionItem.displayName = "AccordionItem"
 
@@ -58,11 +60,11 @@ const AccordionContent = React.forwardRef<
   >
     <div
       className={cn(
-        "pb-4 pt-0 bg-white/30 backdrop-blur-[8px] rounded-lg shadow-inner",
+        "pb-4 pt-0 liquid-glass-accordion shadow-inner",
         className
       )}
-      style={{ WebkitBackdropFilter: "blur(8px) saturate(180%)" }}
     >
+      <span className="liquid-glass-shine" aria-hidden="true" />
       {children}
     </div>
   </AccordionPrimitive.Content>

@@ -13,18 +13,20 @@ const HoverCardTrigger = HoverCardPrimitive.Trigger
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+>(({ className, align = "center", sideOffset = 4, children, ...props }, ref) => (
   <HoverCardPrimitive.Content
     ref={ref}
     align={align}
     sideOffset={sideOffset}
     className={cn(
-      "z-50 w-64 rounded-md border border-white/30 bg-white/20 p-4 text-popover-foreground shadow-md backdrop-blur-[12px] outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-hover-card-content-transform-origin]",
+      "liquid-glass-popover z-50 w-64 rounded-md p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-hover-card-content-transform-origin]",
       className
     )}
-    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
-  />
+  >
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    <div className="relative z-10">{children}</div>
+  </HoverCardPrimitive.Content>
 ))
 HoverCardContent.displayName = HoverCardPrimitive.Content.displayName
 

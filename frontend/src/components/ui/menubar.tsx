@@ -40,16 +40,18 @@ function MenubarSub({
 const Menubar = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Root>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <MenubarPrimitive.Root
     ref={ref}
     className={cn(
-      "flex h-10 items-center space-x-1 rounded-md border border-white/30 bg-white/20 p-1 backdrop-blur-[12px] shadow-md",
+      "liquid-glass-nav flex h-10 items-center space-x-1 rounded-md p-1 shadow-md relative overflow-hidden",
       className
     )}
-    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
-  />
+  >
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    <div className="relative z-10 w-full">{children}</div>
+  </MenubarPrimitive.Root>
 ))
 Menubar.displayName = MenubarPrimitive.Root.displayName
 
@@ -93,16 +95,18 @@ MenubarSubTrigger.displayName = MenubarPrimitive.SubTrigger.displayName
 const MenubarSubContent = React.forwardRef<
   React.ElementRef<typeof MenubarPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.SubContent>
->(({ className, ...props }, ref) => (
+>(({ className, children, ...props }, ref) => (
   <MenubarPrimitive.SubContent
     ref={ref}
     className={cn(
-      "z-50 min-w-[8rem] overflow-hidden rounded-md border border-white/30 bg-white/20 p-1 text-popover-foreground backdrop-blur-[12px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+      "liquid-glass-dropdown z-50 min-w-[8rem] overflow-hidden rounded-md p-1 text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
       className
     )}
-    style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
     {...props}
-  />
+  >
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    <div className="relative z-10">{children}</div>
+  </MenubarPrimitive.SubContent>
 ))
 MenubarSubContent.displayName = MenubarPrimitive.SubContent.displayName
 
@@ -112,7 +116,7 @@ const MenubarContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof MenubarPrimitive.Content>
 >(
   (
-    { className, align = "start", alignOffset = -4, sideOffset = 8, ...props },
+    { className, align = "start", alignOffset = -4, sideOffset = 8, children, ...props },
     ref
   ) => (
     <MenubarPrimitive.Portal>
@@ -122,12 +126,14 @@ const MenubarContent = React.forwardRef<
         alignOffset={alignOffset}
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-[12rem] overflow-hidden rounded-md border border-white/30 bg-white/20 p-1 text-popover-foreground shadow-md backdrop-blur-[12px] data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
+          "liquid-glass-dropdown z-50 min-w-[12rem] overflow-hidden rounded-md p-1 text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-menubar-content-transform-origin]",
           className
         )}
-        style={{ WebkitBackdropFilter: "blur(12px) saturate(180%)" }}
         {...props}
-      />
+      >
+        <span className="liquid-glass-shine" aria-hidden="true" />
+        <div className="relative z-10">{children}</div>
+      </MenubarPrimitive.Content>
     </MenubarPrimitive.Portal>
   )
 )

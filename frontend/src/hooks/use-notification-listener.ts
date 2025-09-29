@@ -1,4 +1,4 @@
-
+"use client";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addNotification } from "@/state/notificationSlice";

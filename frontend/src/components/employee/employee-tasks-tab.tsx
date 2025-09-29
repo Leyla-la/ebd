@@ -28,10 +28,11 @@ interface EmployeeTasksTabProps {
 
 const EmployeeTasksTab: React.FC<EmployeeTasksTabProps> = ({ tasks, isAdmin }) => {
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border text-sm">
+    <div className="liquid-glass-card overflow-x-auto p-4 relative">
+      <span className="liquid-glass-shine" aria-hidden="true" />
+      <table className="min-w-full border text-sm bg-white/10 rounded-xl overflow-hidden relative z-10">
         <thead>
-          <tr className="bg-gray-100">
+          <tr className="bg-white/20">
             <th>Title</th>
             <th>Type</th>
             <th>Status</th>
@@ -44,7 +45,7 @@ const EmployeeTasksTab: React.FC<EmployeeTasksTabProps> = ({ tasks, isAdmin }) =
         </thead>
         <tbody>
           {tasks.map((t) => (
-            <tr key={t.id} className="border-b">
+            <tr key={t.id} className="border-b border-white/20">
               <td>{t.title}</td>
               <td>{t.type}</td>
               <td>{t.status}</td>

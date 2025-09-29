@@ -1,6 +1,5 @@
 
 import * as React from "react";
-import LiquidGlass from "liquid-glass-react";
 
 type ButtonVariant = "default" | "ghost" | "destructive";
 
@@ -22,40 +21,30 @@ const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
   },
 };
 
+type ButtonSize = "default" | "icon";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  size?: ButtonSize;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = "", style = {}, children, variant = "default", ...props }, ref) => (
-    <LiquidGlass
-      displacementScale={60}
-      blurAmount={0.06}
-      saturation={160}
-      elasticity={0.15}
-      mode="standard"
-      cornerRadius={16}
-      style={{ display: "inline-block", borderRadius: 16, ...style }}
-      className={className}
-      onClick={typeof props.onClick === "function" ? () => props.onClick && props.onClick({} as any) : undefined}
-    >
+  ({ className = "", style = {}, children, variant = "default", size = "default", ...props }, ref) => {
+    const sizeClass = size === "icon"
+      ? "p-2 w-10 h-10 flex items-center justify-center rounded-full"
+      : "px-8 py-3";
+    return (
       <button
         ref={ref}
-        style={{
-          ...variantStyles[variant],
-          fontWeight: 600,
-          fontSize: 16,
-          padding: "12px 32px",
-          borderRadius: 16,
-          cursor: "pointer",
-          ...style,
-        }}
+        className={`liquid-glass-btn relative overflow-hidden font-semibold text-base transition ${sizeClass} ${className}`}
+        style={{ ...variantStyles[variant], ...style }}
         {...props}
       >
+        <span className="liquid-glass-shine" aria-hidden="true" />
         {children}
       </button>
-    </LiquidGlass>
-  )
+    );
+  }
 );
 Button.displayName = "Button";
 

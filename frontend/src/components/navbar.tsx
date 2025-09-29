@@ -34,7 +34,6 @@ import { RootState } from "@/state/store";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { markAllAsRead, markAsRead } from "@/state/notificationSlice";
-import LiquidGlass from "liquid-glass-react";
 
 
 // Placeholder icons for theme/language
@@ -96,22 +95,13 @@ export function Navbar() {
   const dispatch = useDispatch();
 
   return (
-    <LiquidGlass
-      displacementScale={80}
-      blurAmount={0.07}
-      saturation={170}
-      elasticity={0.18}
-      mode="prominent"
-      cornerRadius={0}
-      style={{ position: "fixed", left: 0, top: 0, zIndex: 50, width: "100%", height: NAVBAR_HEIGHT }}
-      className={cn("border-b border-white/30 shadow-md md:px-6")}
+    <header
+      className={cn(
+        "liquid-glass-nav flex w-full items-center justify-between px-4 py-2 md:px-6 relative overflow-hidden",
+      )}
+      style={{ height: NAVBAR_HEIGHT, background: "transparent", position: "fixed", left: 0, top: 0, zIndex: 50, width: "100%" }}
     >
-      <header
-        className={cn(
-          "flex w-full items-center justify-between px-4 py-2",
-        )}
-        style={{ height: NAVBAR_HEIGHT, background: "transparent" }}
-      >
+      <span className="liquid-glass-shine" aria-hidden="true" />
         {/* Left: Logo + EBD Corp */}
         <Link href='/' className='flex items-center gap-2'>
           <Image src='/file.svg' alt='EBD Logo' width={28} height={28} />
@@ -170,12 +160,12 @@ export function Navbar() {
             </Popover>
           )}
           {/* Theme icon (placeholder) */}
-          <Button className='rounded-full px-2 py-2 bg-transparent hover:bg-white/10 transition' title='Change theme (coming soon)'>
-            <ThemeIcon className='h-6 w-6 text-muted-foreground' />
+          <Button className='rounded-full p-1.5 bg-transparent hover:bg-white/10 transition' style={{ minWidth: 36, minHeight: 36 }} title='Change theme (coming soon)'>
+            <ThemeIcon className='h-5 w-5 text-muted-foreground' />
           </Button>
           {/* Language icon (placeholder) */}
-          <Button className='rounded-full px-2 py-2 bg-transparent hover:bg-white/10 transition' title='Change language (coming soon)'>
-            <LanguageIcon className='h-6 w-6 text-muted-foreground' />
+          <Button className='rounded-full p-1.5 bg-transparent hover:bg-white/10 transition' style={{ minWidth: 36, minHeight: 36 }} title='Change language (coming soon)'>
+            <LanguageIcon className='h-5 w-5 text-muted-foreground' />
           </Button>
           {/* Avatar or Sign In */}
           {isLoading ? (
@@ -183,7 +173,7 @@ export function Navbar() {
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className='rounded-full px-2 py-2 bg-white/20 hover:bg-white/30 transition'>
+                <Button className='rounded-full p-1.5 bg-white/20 hover:bg-white/30 transition' style={{ minWidth: 36, minHeight: 36 }}>
                   {user.employee?.avatarUrl || user.admin?.image ? (
                     <Image
                       src={
@@ -192,12 +182,12 @@ export function Navbar() {
                         "/default-avatar.png"
                       }
                       alt='User Avatar'
-                      width={32}
-                      height={32}
+                      width={28}
+                      height={28}
                       className='rounded-full'
                     />
                   ) : (
-                    <CircleUser className='h-6 w-6' />
+                    <CircleUser className='h-5 w-5' />
                   )}
                   <span className='sr-only'>Toggle user menu</span>
                 </Button>
@@ -229,7 +219,6 @@ export function Navbar() {
           )}
         </div>
       </header>
-    </LiquidGlass>
   );
 // NOTE: If you want to use other AWS services for user/session storage (like Redis, DynamoDB, etc.), you can implement a custom session/user store in your backend and update the frontend API calls accordingly. Cognito is easiest for managed auth, but Redis/DynamoDB can be used for custom logic or caching.
 }

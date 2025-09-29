@@ -2,26 +2,20 @@
 
 import * as React from "react";
 
-import LiquidGlass from "liquid-glass-react";
 
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className = "", style = {}, children, ...props }, ref) => (
-  <LiquidGlass
-    displacementScale={100}
-    blurAmount={0.08}
-    saturation={180}
-    elasticity={0.2}
-    mode="prominent"
-    cornerRadius={24}
-    style={{ width: "100%", borderRadius: 24, ...style }}
-    className={className}
+  <div
+    ref={ref}
+    className={`liquid-glass-card relative overflow-hidden p-6 w-full ${className}`}
+    style={style}
+    {...props}
   >
-    <div ref={ref} style={{ padding: 24 }} {...props}>
-      {children}
-    </div>
-  </LiquidGlass>
+    <span className="liquid-glass-shine" aria-hidden="true" />
+    {children}
+  </div>
 ));
 Card.displayName = "Card";
 

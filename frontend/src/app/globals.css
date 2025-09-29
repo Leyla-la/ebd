@@ -1,3 +1,50 @@
+/* Liquid Glass Effect Styles */
+.liquid-glass-card, .liquid-glass-btn, .liquid-glass-badge, .liquid-glass-popover, .liquid-glass-dropdown, .liquid-glass-nav, .liquid-glass-progress, .liquid-glass-avatar, .liquid-glass-accordion {
+  background: rgba(255,255,255,0.18);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 8px 0 rgba(31,38,135,0.10);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-radius: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass-shine {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  top: -60%;
+  left: -60%;
+  width: 220%;
+  height: 220%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.45) 40%, rgba(255,255,255,0.18) 100%);
+  opacity: 0.7;
+  filter: blur(8px);
+  z-index: 1;
+  animation: liquid-glass-shine-move 3.5s linear infinite;
+}
+
+@keyframes liquid-glass-shine-move {
+  0% {
+    transform: translate(-20%, -20%) rotate(0deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translate(20%, 20%) rotate(15deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-20%, -20%) rotate(0deg);
+    opacity: 0.7;
+  }
+}
+
+/* Accessibility: ensure text contrast on glass */
+.liquid-glass-card *, .liquid-glass-btn * {
+  position: relative;
+  z-index: 2;
+}
 @import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
