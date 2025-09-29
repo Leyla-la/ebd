@@ -1,67 +1,3 @@
-model Notification {
-  id         String   @id @default(cuid())
-  employeeId String?
-  employee   Employee? @relation("EmployeeNotifications", fields: [employeeId], references: [id], onDelete: Cascade)
-  adminId    String?
-  admin      Admin?    @relation("AdminNotifications", fields: [adminId], references: [id], onDelete: Cascade)
-  type       String
-  title      String
-  content    String
-  sentAt     DateTime
-  read       Boolean  @default(false)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([employeeId])
-  @@index([adminId])
-  @@map("notifications")
-}
-model EbdLog {
-  id          String   @id @default(cuid())
-  employeeId  String
-  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  timestamp   DateTime
-  eventType   String
-  value       Float
-  description String?
-  severity    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([employeeId])
-  @@map("ebd_logs")
-}
-// Task model for task management
-model Task {
-  id            String   @id @default(cuid())
-  title         String
-  description   String
-  type          String
-  status        String
-  deadline      DateTime?
-  completedAt   DateTime?
-  assignedToId  String?
-  assignedTo    Employee? @relation("AssignedTasks", fields: [assignedToId], references: [id])
-  assignedById  String?
-  assignedBy    Admin?    @relation("AssignedByTasks", fields: [assignedById], references: [id])
-  history       Json?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  @@index([assignedToId])
-  @@index([assignedById])
-  @@map("tasks")
-}
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-//generator frontend_py {
-//provider             = "prisma-client-py"
-//  interface            = "asyncio"
-//  recursive_type_depth = 5
-// output               = "../../../node_modules/@prisma/client_py"
-//}
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -71,7 +7,409 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ENUMS //
+model Notification {
+  id         String    @id @default(cuid())
+  employeeId String?
+  adminId    String?
+  type       String
+  title      String
+  content    String
+  sentAt     DateTime
+  read       Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  admin      Admin?    @relation("AdminNotifications", fields: [adminId], references: [id], onDelete: Cascade)
+  employee   Employee? @relation("EmployeeNotifications", fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([adminId])
+  @@map("notifications")
+}
+
+model EbdLog {
+  id          String   @id @default(cuid())
+  employeeId  String
+  timestamp   DateTime
+  eventType   String
+  value       Float
+  description String?
+  severity    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("ebd_logs")
+}
+
+model Task {
+  id           String    @id @default(cuid())
+  title        String
+  description  String
+  type         String
+  status       String
+  deadline     DateTime?
+  completedAt  DateTime?
+  assignedToId String?
+  assignedById String?
+  history      Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  assignedBy   Admin?    @relation("AssignedByTasks", fields: [assignedById], references: [id])
+  assignedTo   Employee? @relation("AssignedTasks", fields: [assignedToId], references: [id])
+
+  @@index([assignedToId])
+  @@index([assignedById])
+  @@map("tasks")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  cognitoId      String?   @unique
+  email          String    @unique
+  hashedPassword String?
+  role           UserRole  @default(EMPLOYEE)
+  isActive       Boolean   @default(true)
+  isSuperuser    Boolean   @default(false)
+  name           String?
+  avatar         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  admin          Admin?
+  employee       Employee?
+
+  @@map("users")
+}
+
+model Admin {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  name            String
+  email           String         @unique
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications   Notification[] @relation("AdminNotifications")
+  assignedByTasks Task[]         @relation("AssignedByTasks")
+
+  @@map("admins")
+}
+
+model Employee {
+  id                    String                 @id @default(cuid())
+  userId                String                 @unique
+  employeeCode          String                 @unique
+  name                  String
+  email                 String                 @unique
+  personalEmail         String?                @unique
+  phoneNumber           String?
+  gender                Gender?
+  dateOfBirth           DateTime?
+  maritalStatus         MaritalStatus?
+  nationality           String?
+  religion              String?
+  placeOfBirth          String?
+  address               Json?
+  bankAccountNumber     String?
+  bankName              String?
+  avatarUrl             String?
+  avatarFile            Bytes?
+  departmentId          String?
+  hireDate              DateTime
+  endDate               DateTime?
+  status                EmployeeStatus         @default(ACTIVE)
+  position              String
+  faceEmbedding         Float[]
+  deskId                String?                @unique
+  points                Int                    @default(0)
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  activities            Activity[]
+  activityConfirmations ActivityConfirmation[]
+  contracts             Contract[]
+  ebdLogs               EbdLog[]
+  emergencyContacts     EmergencyContact[]
+  achievements          EmployeeAchievement[]
+  shifts                EmployeeShift[]
+  department            Department?            @relation(fields: [departmentId], references: [id])
+  desk                  Desk?                  @relation(fields: [deskId], references: [id])
+  user                  User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  leaves                Leave[]
+  notifications         Notification[]         @relation("EmployeeNotifications")
+  payrolls              Payroll[]
+  assignedTasks         Task[]                 @relation("AssignedTasks")
+  warnings              Warning[]
+
+  @@index([departmentId])
+  @@index([status])
+  @@map("employees")
+}
+
+model Contract {
+  id             String         @id @default(cuid())
+  employeeId     String
+  contractNumber String         @unique
+  contractType   ContractType
+  status         ContractStatus @default(ACTIVE)
+  startDate      DateTime
+  endDate        DateTime?
+  jobTitle       String
+  salary         Float
+  salaryCurrency String         @default("USD")
+  filePath       String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  employee       Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("contracts")
+}
+
+model EmergencyContact {
+  id           String   @id @default(cuid())
+  employeeId   String
+  name         String
+  relationship String
+  phoneNumber  String
+  email        String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  employee     Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, name])
+  @@index([employeeId])
+  @@map("emergency_contacts")
+}
+
+model Payroll {
+  id                 String         @id @default(cuid())
+  employeeId         String
+  payPeriodStart     DateTime?
+  payPeriodEnd       DateTime?
+  payDate            DateTime?
+  payRate            Float?
+  payFrequency       PayFrequency?
+  hoursWorked        Float?
+  grossPay           Float?
+  deductions         Json?
+  bonuses            Json?
+  netPay             Float?
+  status             PayrollStatus? @default(PENDING)
+  paymentMethod      String?
+  month              String?
+  year               Int?
+  baseSalary         Float?
+  allowance          Float?
+  bonus              Float?
+  deduction          Float?
+  tax                Float?
+  kpiAttendance      Float?
+  kpiBehaviour       Float?
+  kpiPerformance     Float?
+  kpiTotal           Float?
+  bonusByKPI         Float?
+  penaltyByBehaviour Float?
+  netSalary          Float?
+  paymentStatus      String?
+  autoDeducted       Boolean?
+  payrollFileUrl     String?
+  paymentDate        DateTime?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  employee           Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, payPeriodStart, payPeriodEnd])
+  @@index([status])
+  @@map("payrolls")
+}
+
+model Leave {
+  id         String      @id @default(cuid())
+  employeeId String
+  leaveType  LeaveType
+  startDate  DateTime
+  endDate    DateTime
+  reason     String?
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@index([status])
+  @@map("leaves")
+}
+
+model Desk {
+  id         String     @id @default(cuid())
+  label      String     @unique
+  zone       String?
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  activities Activity[]
+  employee   Employee?
+
+  @@map("desks")
+}
+
+model Camera {
+  id         String     @id @default(cuid())
+  name       String
+  source     String
+  location   String?
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  activities Activity[]
+
+  @@map("cameras")
+}
+
+model Activity {
+  id           String       @id @default(cuid())
+  employeeId   String
+  deskId       String?
+  cameraId     String?
+  activityType ActivityType
+  startTime    DateTime
+  endTime      DateTime?
+  details      Json?
+  createdAt    DateTime     @default(now())
+  camera       Camera?      @relation(fields: [cameraId], references: [id])
+  desk         Desk?        @relation(fields: [deskId], references: [id])
+  employee     Employee     @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@index([activityType])
+  @@map("activities")
+}
+
+model Policy {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  rules       Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("policies")
+}
+
+model Warning {
+  id         String   @id @default(cuid())
+  employeeId String
+  reason     String
+  severity   Severity
+  isRead     Boolean  @default(false)
+  timestamp  DateTime
+  createdAt  DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@index([severity])
+  @@map("warnings")
+}
+
+model Shift {
+  id        String          @id @default(cuid())
+  name      String          @unique
+  startTime String
+  endTime   String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  employees EmployeeShift[]
+
+  @@map("shifts")
+}
+
+model EmployeeShift {
+  employeeId String
+  shiftId    String
+  assignedAt DateTime @default(now())
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  shift      Shift    @relation(fields: [shiftId], references: [id])
+
+  @@id([employeeId, shiftId])
+  @@map("employee_shifts")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String
+  action    String
+  target    String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([actor])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+model SystemSetting {
+  key         String   @id
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+model Department {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  employees Employee[]
+
+  @@map("departments")
+}
+
+model Achievement {
+  id          String                @id @default(cuid())
+  name        String                @unique
+  description String
+  points      Int
+  icon        String
+  employees   EmployeeAchievement[]
+
+  @@map("achievements")
+}
+
+model EmployeeAchievement {
+  id            String      @id @default(cuid())
+  employeeId    String
+  achievementId String
+  awardedAt     DateTime    @default(now())
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  employee      Employee    @relation(fields: [employeeId], references: [id])
+
+  @@unique([employeeId, achievementId])
+  @@map("employee_achievements")
+}
+
+model ActivityConfirmation {
+  id          String   @id @default(cuid())
+  trackId     String
+  employeeId  String
+  activity    String
+  value       Float
+  reason      String?
+  confirmedBy String?
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  employee    Employee @relation(fields: [employeeId], references: [id])
+
+  @@index([employeeId])
+  @@map("activity_confirmations")
+}
+
 enum UserRole {
   ADMIN
   EMPLOYEE
@@ -153,360 +491,4 @@ enum Severity {
   MEDIUM
   HIGH
   CRITICAL
-}
-
-// MODELS //
-
-model User {
-  id             String    @id @default(cuid())
-  cognitoId      String?   @unique
-  email          String    @unique
-  hashedPassword String?
-  role           UserRole  @default(EMPLOYEE)
-  isActive       Boolean   @default(true)
-  isSuperuser    Boolean   @default(false)
-  name           String?
-  avatar         String?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  
-  employee       Employee?
-  admin          Admin?
-
-  @@map("users")
-}
-
-model Admin {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  email     String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  assignedByTasks Task[] @relation("AssignedByTasks")
-  notifications   Notification[] @relation("AdminNotifications")
-  @@map("admins")
-}
-
-model Employee {
-  id                  String                 @id @default(cuid())
-  userId              String                 @unique
-  user                User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  employeeCode        String                 @unique
-  name                String
-  email               String                 @unique
-  personalEmail       String?                @unique
-  phoneNumber         String?
-  gender              Gender?
-  dateOfBirth         DateTime?
-  maritalStatus       MaritalStatus?
-  nationality         String?
-  religion            String?
-  placeOfBirth        String?
-  address             Json?
-  bankAccountNumber   String?
-  bankName            String?
-  avatarUrl           String?
-  avatarFile          Bytes?
-  departmentId        String?
-  department          Department?            @relation(fields: [departmentId], references: [id])
-  hireDate            DateTime
-  endDate             DateTime?
-  status              EmployeeStatus         @default(ACTIVE)
-  position            String
-  faceEmbedding       Float[]
-  deskId              String?                @unique
-  desk                Desk?                  @relation(fields: [deskId], references: [id])
-
-  payrolls            Payroll[]
-  leaves              Leave[]
-  activities          Activity[]
-  warnings            Warning[]
-  shifts              EmployeeShift[]
-  contracts           Contract[]
-  emergencyContacts   EmergencyContact[]
-
-  points              Int                    @default(0)
-  achievements        EmployeeAchievement[]
-  activityConfirmations ActivityConfirmation[]
-  ebdLogs               EbdLog[]
-  notifications         Notification[] @relation("EmployeeNotifications")
-    // Tasks assigned to this employee
-    assignedTasks       Task[]                 @relation("AssignedTasks")
-
-  createdAt           DateTime               @default(now())
-  updatedAt           DateTime               @updatedAt
-
-  @@index([departmentId])
-  @@index([status])
-  @@map("employees")
-}
-
-model Contract {
-  id             String         @id @default(cuid())
-  employeeId     String
-  employee       Employee       @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  contractNumber String         @unique
-  contractType   ContractType
-  status         ContractStatus @default(ACTIVE)
-  startDate      DateTime
-  endDate        DateTime?
-  jobTitle       String
-  salary         Float
-  salaryCurrency String         @default("USD")
-  filePath       String?
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-
-  @@index([employeeId])
-  @@index([status])
-  @@map("contracts")
-}
-
-model EmergencyContact {
-  id            String   @id @default(cuid())
-  employeeId    String
-  employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  name          String
-  relationship  String
-  phoneNumber   String
-  email         String?
-  address       String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@index([employeeId])
-  @@unique([employeeId, name])
-  @@map("emergency_contacts")
-}
-
-model Payroll {
-  id             String        @id @default(cuid())
-  employeeId     String
-  employee       Employee      @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  // Old fields for compatibility
-  payPeriodStart DateTime?
-  payPeriodEnd   DateTime?
-  payDate        DateTime?
-  payRate        Float?
-  payFrequency   PayFrequency?
-  hoursWorked    Float?
-  grossPay       Float?
-  deductions     Json?
-  bonuses        Json?
-  netPay         Float?
-  status         PayrollStatus? @default(PENDING)
-  paymentMethod  String?
-  // New fields for mock/seed/frontend
-  month          String?
-  year           Int?
-  baseSalary     Float?
-  allowance      Float?
-  bonus          Float?
-  deduction      Float?
-  tax            Float?
-  kpiAttendance  Float?
-  kpiBehaviour   Float?
-  kpiPerformance Float?
-  kpiTotal       Float?
-  bonusByKPI     Float?
-  penaltyByBehaviour Float?
-  netSalary      Float?
-  paymentStatus  String?
-  autoDeducted   Boolean?
-  payrollFileUrl String?
-  paymentDate    DateTime?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-
-  @@unique([employeeId, payPeriodStart, payPeriodEnd])
-  @@index([status])
-  @@map("payrolls")
-}
-
-model Leave {
-  id         String      @id @default(cuid())
-  employeeId String
-  employee   Employee    @relation(fields: [employeeId], references: [id])
-  leaveType  LeaveType
-  startDate  DateTime
-  endDate    DateTime
-  reason     String?
-  status     LeaveStatus @default(PENDING)
-  approvedBy String?
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-
-  @@index([employeeId])
-  @@index([status])
-  @@map("leaves")
-}
-
-model Desk {
-  id         String     @id @default(cuid())
-  label      String     @unique
-  zone       String?
-  isActive   Boolean    @default(true)
-  employee   Employee?
-  activities Activity[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  @@map("desks")
-}
-
-model Camera {
-  id         String     @id @default(cuid())
-  name       String
-  source     String
-  location   String?
-  isActive   Boolean    @default(true)
-  activities Activity[]
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-
-  @@map("cameras")
-}
-
-model Activity {
-  id           String       @id @default(cuid())
-  employeeId   String
-  employee     Employee     @relation(fields: [employeeId], references: [id])
-  deskId       String?
-  desk         Desk?        @relation(fields: [deskId], references: [id])
-  cameraId     String?
-  camera       Camera?      @relation(fields: [cameraId], references: [id])
-  activityType ActivityType
-  startTime    DateTime
-  endTime      DateTime?
-  details      Json?
-  createdAt    DateTime     @default(now())
-
-  @@index([employeeId])
-  @@index([activityType])
-  @@map("activities")
-}
-
-model Policy {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?
-  rules       Json
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("policies")
-}
-
-model Warning {
-  id         String   @id @default(cuid())
-  employeeId String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  reason     String
-  severity   Severity
-  isRead     Boolean  @default(false)
-  timestamp  DateTime
-  createdAt  DateTime @default(now())
-
-  @@index([employeeId])
-  @@index([severity])
-  @@map("warnings")
-}
-
-model Shift {
-  id        String          @id @default(cuid())
-  name      String          @unique
-  startTime String
-  endTime   String
-  employees EmployeeShift[]
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
-
-  @@map("shifts")
-}
-
-model EmployeeShift {
-  employeeId String
-  shiftId    String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  shift      Shift    @relation(fields: [shiftId], references: [id])
-  assignedAt DateTime @default(now())
-
-  @@id([employeeId, shiftId])
-  @@map("employee_shifts")
-}
-
-model AuditLog {
-  id        String   @id @default(cuid())
-  actor     String
-  action    String
-  target    String?
-  details   Json?
-  ipAddress String?
-  createdAt DateTime @default(now())
-
-  @@index([actor])
-  @@index([action])
-  @@map("audit_logs")
-}
-
-model SystemSetting {
-  key         String   @id
-  value       Json
-  description String?
-  updatedAt   DateTime @updatedAt
-
-  @@map("system_settings")
-}
-
-model Department {
-  id        String     @id @default(cuid())
-  name      String     @unique
-  employees Employee[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-
-  @@map("departments")
-}
-
-model Achievement {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String
-  points      Int
-  icon        String
-  employees   EmployeeAchievement[]
-
-  @@map("achievements")
-}
-
-model EmployeeAchievement {
-  id            String      @id @default(cuid())
-  employee      Employee    @relation(fields: [employeeId], references: [id])
-  employeeId    String
-  achievement   Achievement @relation(fields: [achievementId], references: [id])
-  achievementId String
-  awardedAt     DateTime    @default(now())
-
-  @@unique([employeeId, achievementId])
-  @@map("employee_achievements")
-}
-
-model ActivityConfirmation {
-  id          String   @id @default(cuid())
-  trackId     String
-  employeeId  String
-  employee    Employee @relation(fields: [employeeId], references: [id])
-  activity    String
-  value       Float
-  reason      String?
-  confirmedBy String?
-  timestamp   DateTime @default(now())
-  createdAt   DateTime @default(now())
-
-  @@index([employeeId])
-  @@map("activity_confirmations")
 }

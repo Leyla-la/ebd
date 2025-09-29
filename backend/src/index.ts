@@ -1,3 +1,4 @@
+// (Global request logger moved below)
 import express from "express";
 console.log('=== Express app started ===');
 import { createServer } from "http";
@@ -21,6 +22,11 @@ import emergencyContactRoutes from './routes/emergencyContact.ts'; // Importing 
 // CONFIGURATION
 dotenv.config();
 const app = express();
+// GLOBAL REQUEST LOGGER FOR DEBUGGING
+app.use((req, res, next) => {
+  console.log('[GLOBAL LOG]', req.method, req.originalUrl);
+  next();
+});
 const httpServer = createServer(app);
 const io = new IOServer(httpServer, {
   cors: {
