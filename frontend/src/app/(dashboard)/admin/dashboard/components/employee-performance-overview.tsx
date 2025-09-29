@@ -1,5 +1,20 @@
+"use client";
 import React from "react";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, Legend } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  Legend,
+} from "recharts";
 
 const attendanceData = [
   { name: "Present", value: 92 },
@@ -38,9 +53,20 @@ const EmployeePerformanceOverview = () => {
         <div className="font-semibold mb-2">Attendance & Presence %</div>
         <ResponsiveContainer width="100%" height={180}>
           <PieChart>
-            <Pie data={attendanceData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
+            <Pie
+              data={attendanceData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label
+            >
               {attendanceData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />
@@ -52,7 +78,10 @@ const EmployeePerformanceOverview = () => {
       <div className="bg-purple-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Active vs Away Time</div>
         <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={activeAwayData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <BarChart
+            data={activeAwayData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
@@ -67,7 +96,15 @@ const EmployeePerformanceOverview = () => {
         <div className="font-semibold mb-2">Behavior Breakdown</div>
         <ResponsiveContainer width="100%" height={180}>
           <PieChart>
-            <Pie data={behaviorPie} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
+            <Pie
+              data={behaviorPie}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label
+            >
               <Cell fill="#34d399" />
               <Cell fill="#fbbf24" />
               <Cell fill="#f472b6" />
@@ -81,12 +118,21 @@ const EmployeePerformanceOverview = () => {
       <div className="bg-orange-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Overtime Tracker</div>
         <ResponsiveContainer width="100%" height={180}>
-          <LineChart data={overtimeData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <LineChart
+            data={overtimeData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="hours" stroke="#fb923c" strokeWidth={3} dot={{ r: 4 }} />
+            <Line
+              type="monotone"
+              dataKey="hours"
+              stroke="#fb923c"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

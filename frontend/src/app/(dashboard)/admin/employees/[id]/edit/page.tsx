@@ -1,12 +1,12 @@
 "use client";
 
-import { EmployeeForm } from "@/app/(dashboard)/employees/components/employee-form";
-import { employeeFormSchema } from "@/lib/validators/employee";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import * as z from "zod";
 import { Skeleton } from "@/components/ui/skeleton";
+import { employeeFormSchema } from "@/types/prismaTypes";
+import { EmployeeForm } from "../../components/employee-form";
 
 // Mock function to get employee data
 const getEmployeeById = async (id: string) => {

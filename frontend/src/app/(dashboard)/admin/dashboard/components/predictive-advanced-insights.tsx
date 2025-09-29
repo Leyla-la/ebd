@@ -1,5 +1,17 @@
+"use client";
 import React from "react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  Legend,
+} from "recharts";
 
 const productivityData = [
   { month: "Jan", score: 70 },
@@ -31,12 +43,21 @@ const PredictiveAdvancedInsights = () => {
       <div className="bg-blue-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Productivity Forecast</div>
         <ResponsiveContainer width="100%" height={180}>
-          <LineChart data={productivityData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <LineChart
+            data={productivityData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="score" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />
+            <Line
+              type="monotone"
+              dataKey="score"
+              stroke="#2563eb"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -45,7 +66,10 @@ const PredictiveAdvancedInsights = () => {
       <div className="bg-yellow-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Behavioral Shift Detection</div>
         <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={behaviorData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <BarChart
+            data={behaviorData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />

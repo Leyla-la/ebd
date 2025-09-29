@@ -28,7 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
-import { buttonVariants } from "@/components/ui/button";
+
 import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -111,10 +111,20 @@ export const columns: ColumnDef<Employee>[] = [
     cell: ({ row }) => {
       const role = row.original.role;
       if (!role) return "N/A";
-      const variant = role === "ADMIN" ? "default" : "secondary";
+      const isAdmin = role === "ADMIN";
       const formattedRole =
         role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-      return <Badge variant={variant}>{formattedRole}</Badge>;
+      return (
+        <Badge
+          className={
+            isAdmin
+              ? "bg-blue-600 text-white border-blue-600"
+              : "bg-gray-300 text-gray-800 border-gray-300"
+          }
+        >
+          {formattedRole}
+        </Badge>
+      );
     },
   },
   {
@@ -122,14 +132,12 @@ export const columns: ColumnDef<Employee>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.status;
-      const variant =
-        status === "ACTIVE"
-          ? "success"
-          : status === "ON_LEAVE"
-          ? "warning"
-          : "destructive";
+      let badgeClass = "bg-gray-300 text-gray-800 border-gray-300";
+      if (status === "ACTIVE") badgeClass = "bg-green-500 text-white border-green-500";
+      else if (status === "ON_LEAVE") badgeClass = "bg-yellow-400 text-black border-yellow-400";
+      else if (status === "TERMINATED" || status === "INACTIVE") badgeClass = "bg-red-500 text-white border-red-500";
       const formattedStatus = status.replace("_", " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
-      return <Badge variant={variant}>{formattedStatus}</Badge>;
+      return <Badge className={badgeClass}>{formattedStatus}</Badge>;
     },
   },
   {
@@ -200,9 +208,7 @@ export const columns: ColumnDef<Employee>[] = [
               <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => console.log(`Deleting ${employee.id}`)}
-                className={`${buttonVariants({
-                  variant: "destructive",
-                })} cursor-pointer`}
+                className="bg-red-500 text-white border-red-500 cursor-pointer"
               >
                 Continue
               </AlertDialogAction>

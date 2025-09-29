@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { FaVideo, FaBell, FaTable } from "react-icons/fa";
 
@@ -9,9 +10,17 @@ const heatmapData = [
   { name: "12PM", Desk1: 1, Desk2: 1, Desk3: 0 },
 ];
 const alerts = [
-  { time: "09:15", message: "Employee #2 left desk for 35min (violation)", type: "warning" },
+  {
+    time: "09:15",
+    message: "Employee #2 left desk for 35min (violation)",
+    type: "warning",
+  },
   { time: "10:02", message: "Employee #1 returned to desk", type: "info" },
-  { time: "10:30", message: "Camera 2: Unrecognized face detected", type: "alert" },
+  {
+    time: "10:30",
+    message: "Camera 2: Unrecognized face detected",
+    type: "alert",
+  },
 ];
 const events = [
   { time: "09:00", event: "All employees present" },
@@ -23,24 +32,45 @@ const events = [
 const LiveMonitoringPanel = () => {
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-bold mb-2 flex items-center gap-2"><FaVideo /> Live Monitoring Panel</h2>
+      <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+        <FaVideo /> Live Monitoring Panel
+      </h2>
       {/* Live Camera Feed Frame */}
       <div className="bg-black text-white rounded-lg p-4 mb-4 flex flex-col items-center justify-center min-h-[180px]">
         <div className="mb-2">Live Camera Feed</div>
-        <div className="w-full h-32 bg-gray-800 rounded flex items-center justify-center">[Camera Stream Here]</div>
+        <div className="w-full h-32 bg-gray-800 rounded flex items-center justify-center">
+          [Camera Stream Here]
+        </div>
         <div className="flex gap-2 mt-2">
-          <button className="bg-gray-700 text-white px-3 py-1 rounded">Cam 1</button>
-          <button className="bg-gray-700 text-white px-3 py-1 rounded">Cam 2</button>
-          <button className="bg-gray-700 text-white px-3 py-1 rounded">Cam 3</button>
+          <button className="bg-gray-700 text-white px-3 py-1 rounded">
+            Cam 1
+          </button>
+          <button className="bg-gray-700 text-white px-3 py-1 rounded">
+            Cam 2
+          </button>
+          <button className="bg-gray-700 text-white px-3 py-1 rounded">
+            Cam 3
+          </button>
         </div>
       </div>
 
       {/* Real-Time Alerts Feed */}
       <div className="bg-yellow-50 rounded-lg p-4 mb-4">
-        <div className="font-semibold mb-2 flex items-center gap-2"><FaBell className="text-yellow-500" /> Real-Time Alerts</div>
+        <div className="font-semibold mb-2 flex items-center gap-2">
+          <FaBell className="text-yellow-500" /> Real-Time Alerts
+        </div>
         <ul className="space-y-1">
           {alerts.map((a, i) => (
-            <li key={i} className={`text-sm ${a.type === "alert" ? "text-red-600" : a.type === "warning" ? "text-yellow-700" : "text-gray-700"}`}>
+            <li
+              key={i}
+              className={`text-sm ${
+                a.type === "alert"
+                  ? "text-red-600"
+                  : a.type === "warning"
+                  ? "text-yellow-700"
+                  : "text-gray-700"
+              }`}
+            >
               <span className="font-mono mr-2">[{a.time}]</span> {a.message}
             </li>
           ))}
@@ -74,7 +104,9 @@ const LiveMonitoringPanel = () => {
 
       {/* Recent Events Table */}
       <div className="bg-gray-100 rounded-lg p-4">
-        <div className="font-semibold mb-2 flex items-center gap-2"><FaTable /> Recent Events</div>
+        <div className="font-semibold mb-2 flex items-center gap-2">
+          <FaTable /> Recent Events
+        </div>
         <table className="w-full text-xs">
           <thead>
             <tr>

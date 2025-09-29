@@ -1,12 +1,11 @@
-import { cookies } from 'next/headers';
-import DashboardShell from './DashboardShell';
+"use client";
+import DashboardShell from "./DashboardShell";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get('sidebar_state')?.value !== 'false';
-  return <DashboardShell defaultOpen={defaultOpen}>{children}</DashboardShell>;
+  // SidebarProvider in DashboardShell will handle sidebar state (optionally read cookie client-side if needed)
+  return <DashboardShell>{children}</DashboardShell>;
 }

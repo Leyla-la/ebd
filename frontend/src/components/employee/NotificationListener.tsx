@@ -1,5 +1,6 @@
+"use client";
 import { useState, useCallback } from "react";
-import { useNotificationSocket } from "../../hooks/useNotificationSocket";
+import { useNotificationSocket } from "../../hooks/use-noti-socket";
 
 export default function NotificationListener({ token }: { token: string }) {
   const [notifications, setNotifications] = useState<any[]>([]);

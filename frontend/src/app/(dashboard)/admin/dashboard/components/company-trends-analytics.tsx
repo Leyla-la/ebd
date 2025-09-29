@@ -1,5 +1,21 @@
+"use client";
 import React from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid, RadarChart, PolarGrid, PolarAngleAxis, Radar, PolarRadiusAxis } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  PolarRadiusAxis,
+} from "recharts";
 
 const heatmapData = [
   { week: "W1", Mon: 3, Tue: 2, Wed: 3, Thu: 2, Fri: 1 },
@@ -28,7 +44,9 @@ const engagementIndex = [
 const CompanyTrendsAnalytics = () => {
   return (
     <section className="mb-8">
-      <h2 className="text-xl font-bold mb-2">Company-Wide Trends & Analytics</h2>
+      <h2 className="text-xl font-bold mb-2">
+        Company-Wide Trends & Analytics
+      </h2>
 
       {/* Monthly Attendance Heatmap (mocked as table) */}
       <div className="bg-green-50 rounded-lg p-4 mb-4">
@@ -63,7 +81,10 @@ const CompanyTrendsAnalytics = () => {
       <div className="bg-blue-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Department Comparison</div>
         <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={deptData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <BarChart
+            data={deptData}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="dept" />
             <YAxis />
@@ -78,12 +99,21 @@ const CompanyTrendsAnalytics = () => {
       <div className="bg-yellow-50 rounded-lg p-4 mb-4">
         <div className="font-semibold mb-2">Violation Trend Over Time</div>
         <ResponsiveContainer width="100%" height={180}>
-          <LineChart data={violationTrend} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
+          <LineChart
+            data={violationTrend}
+            margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="violations" stroke="#facc15" strokeWidth={3} dot={{ r: 4 }} />
+            <Line
+              type="monotone"
+              dataKey="violations"
+              stroke="#facc15"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -109,7 +139,13 @@ const CompanyTrendsAnalytics = () => {
             <PolarGrid />
             <PolarAngleAxis dataKey="subject" />
             <PolarRadiusAxis angle={30} domain={[0, 100]} />
-            <Radar name="Index" dataKey="A" stroke="#a78bfa" fill="#a78bfa" fillOpacity={0.6} />
+            <Radar
+              name="Index"
+              dataKey="A"
+              stroke="#a78bfa"
+              fill="#a78bfa"
+              fillOpacity={0.6}
+            />
             <Tooltip />
           </RadarChart>
         </ResponsiveContainer>

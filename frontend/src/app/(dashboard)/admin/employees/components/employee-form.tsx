@@ -21,12 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  employeeFormSchema,
-  EmployeeFormValues,
-  Gender,
-  MaritalStatus,
-} from "@/lib/validators/employee";
+
 import { useRouter } from "next/navigation";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "path";
+import { EmployeeFormValues, employeeFormSchema, Gender, MaritalStatus } from "@/types/prismaTypes";
 
 // Mock data for departments
 const departments = [
@@ -389,8 +385,7 @@ export function EmployeeForm({
                       <h4 className="font-medium">Contact {index + 1}</h4>
                       <Button
                         type="button"
-                        variant="ghost"
-                        size="icon"
+                        className="btn-ghost btn-icon"
                         onClick={() => remove(index)}
                       >
                         <Trash2 className="w-4 h-4" />
@@ -445,9 +440,9 @@ export function EmployeeForm({
                 {fields.length < 5 && (
                   <Button
                     type="button"
-                    variant="outline"
+                    className="btn-outline"
                     onClick={() =>
-                      append({ name: "", relationship: "", phoneNumber: "" })
+                      append({ id: crypto.randomUUID(), name: "", relationship: "", phoneNumber: "" })
                     }
                   >
                     Add Emergency Contact
@@ -693,7 +688,7 @@ export function EmployeeForm({
         <div className="flex items-center justify-end gap-4 pt-8">
           <Button
             type="button"
-            variant="outline"
+            className="btn-outline"
             onClick={() => router.back()}
             disabled={isSubmitting}
           >

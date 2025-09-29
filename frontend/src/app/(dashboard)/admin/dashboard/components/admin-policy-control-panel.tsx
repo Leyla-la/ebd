@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -49,9 +50,20 @@ const AdminPolicyControlPanel = () => {
         <div className="font-semibold mb-2">User Role Access</div>
         <ResponsiveContainer width="100%" height={180}>
           <PieChart>
-            <Pie data={userRoles} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={60} label>
+            <Pie
+              data={userRoles}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              outerRadius={60}
+              label
+            >
               {userRoles.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <Tooltip />
