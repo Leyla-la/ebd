@@ -22,10 +22,12 @@ const parseJwt = (token: string) => {
   }
 };
 
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3002";
+
 export const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL,
+    baseUrl: API_URL,
     prepareHeaders: async (headers: Headers) => {
       try {
         const session = await fetchAuthSession();
@@ -64,7 +66,7 @@ export const api = createApi({
           }
           const cognitoId = payload.sub;
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/users/cognito/${cognitoId}`,
+            `${API_URL}/users/cognito/${cognitoId}`,
             {
               headers: { Authorization: `Bearer ${idToken}` },
               signal,
