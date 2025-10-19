@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
@@ -12,6 +13,8 @@ const nextConfig: NextConfig = {
       // Thêm các domain khác nếu có
     ],
   },
+  // Silence workspace root warning in monorepo by explicitly setting tracing root to the repo root
+  outputFileTracingRoot: path.join(__dirname, ".."),
   // Thêm experimental để enable Webpack Build Worker (tối ưu memory bằng cách chạy compilation ở separate process)
   experimental: {
     webpackBuildWorker: true,
