@@ -3,21 +3,21 @@ import express from "express";
 console.log('=== Express app started ===');
 import { createServer } from "http";
 import { Server as IOServer } from "socket.io";
-import { registerNotificationSocket } from "./sockets/notification.ts";
+import { registerNotificationSocket } from "./sockets/notification";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-import authRoutes from './routes/auth.ts';
-import employeeRoutes from './routes/employee.ts';
-import userRoutes from './routes/user.ts';
-import payrollRoutes from './routes/payroll.ts';
-import taskRoutes from './routes/task.ts';
-import ebdLogRoutes from './routes/ebdLog.ts'; // Importing ebdLog routes
-import notificationRoutes from './routes/notification.ts'; // Importing notification routes
-import contractRoutes from './routes/contract.ts'; // Importing contract routes
-import emergencyContactRoutes from './routes/emergencyContact.ts'; // Importing emergencyContact routes
+import authRoutes from './routes/auth';
+import employeeRoutes from './routes/employee';
+import userRoutes from './routes/user';
+import payrollRoutes from './routes/payroll';
+import taskRoutes from './routes/task';
+import ebdLogRoutes from './routes/ebdLog'; // Importing ebdLog routes
+import notificationRoutes from './routes/notification'; // Importing notification routes
+import contractRoutes from './routes/contract'; // Importing contract routes
+import emergencyContactRoutes from './routes/emergencyContact'; // Importing emergencyContact routes
 
 // CONFIGURATION
 dotenv.config();
@@ -51,14 +51,15 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/employees", employeeRoutes);
-app.use("/users", userRoutes);
-app.use("/payrolls", payrollRoutes);
-app.use("/tasks", taskRoutes);
-app.use("/ebd-logs", ebdLogRoutes); // Registering ebdLog route
-app.use("/notifications", notificationRoutes); // Registering notification route
-app.use("/contracts", contractRoutes); // Registering contract route
-app.use("/emergency-contacts", emergencyContactRoutes); // Registering emergencyContact route
+app.use("/api/auth", authRoutes);
+app.use("/api/employees", employeeRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/payrolls", payrollRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/ebd-logs", ebdLogRoutes); // Registering ebdLog route
+app.use("/api/notifications", notificationRoutes); // Registering notification route
+app.use("/api/contracts", contractRoutes); // Registering contract route
+app.use("/api/emergency-contacts", emergencyContactRoutes); // Registering emergencyContact route
 
 
 // SERVER

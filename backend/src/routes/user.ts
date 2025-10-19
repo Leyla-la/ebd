@@ -1,12 +1,12 @@
 console.log('User router loaded');
 import express from "express";
-import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { authMiddleware } from "../middleware/authMiddleware";
 import {
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser
-} from "../controllers/userController.ts";
+} from "../controllers/userController";
 
 const router = express.Router();
 

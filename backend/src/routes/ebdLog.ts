@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { authMiddleware } from "../middleware/authMiddleware";
 import {
   getAllEbdLogs,
   getEbdLogById,
   createEbdLog,
   updateEbdLog,
   deleteEbdLog
-} from "../controllers/ebdLogController.ts";
+} from "../controllers/ebdLogController";
 
 const router = Router();
 

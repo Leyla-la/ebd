@@ -1,25 +1,25 @@
 import { PrismaClient } from '@prisma/client';
-import { seedAchievements } from './seedData/achievements.ts';
-import { seedActivities } from './seedData/activities.ts';
-import { seedActivityConfirmations } from './seedData/activityConfirmations.ts';
-import { seedAuditLogs } from './seedData/auditLogs.ts';
-import { seedCameras } from './seedData/cameras.ts';
-import { seedContracts } from './seedData/contracts.ts';
-import { seedDepartments } from './seedData/departments.ts';
-import { seedDesks } from './seedData/desks.ts';
-import { seedEbdLogs } from './seedData/ebdLogs.ts';
-import { seedEmergencyContacts, seedEmergencyContactsFromMock } from './seedData/emergencyContacts.ts';
-import { seedEmployeeAchievements } from './seedData/employeeAchievements.ts';
-import { seedEmployeeShifts } from './seedData/employeeShifts.ts';
-import { seedLeaves } from './seedData/leaves.ts';
-import { seedNotifications } from './seedData/notifications.ts';
-import { seedPayrolls } from './seedData/payrolls.ts';
-import { seedPolicies } from './seedData/policies.ts';
-import { seedShifts } from './seedData/shifts.ts';
-import { seedSystemSettings } from './seedData/systemSettings.ts';
-import { seedTasks } from './seedData/tasks.ts';
-import { seedUsersAndEmployees } from './seedData/usersAndEmployees.ts';
-import { seedWarnings } from './seedData/warnings.ts';
+import { seedAchievements } from './seedData/achievements';
+import { seedActivities } from './seedData/activities';
+import { seedActivityConfirmations } from './seedData/activityConfirmations';
+import { seedAuditLogs } from './seedData/auditLogs';
+import { seedCameras } from './seedData/cameras';
+import { seedContracts } from './seedData/contracts';
+import { seedDepartments } from './seedData/departments';
+import { seedDesks } from './seedData/desks';
+import { seedEbdLogs } from './seedData/ebdLogs';
+import { seedEmergencyContacts, seedEmergencyContactsFromMock } from './seedData/emergencyContacts';
+import { seedEmployeeAchievements } from './seedData/employeeAchievements';
+import { seedEmployeeShifts } from './seedData/employeeShifts';
+import { seedLeaves } from './seedData/leaves';
+import { seedNotifications } from './seedData/notifications';
+import { seedPayrolls } from './seedData/payrolls';
+import { seedPolicies } from './seedData/policies';
+import { seedShifts } from './seedData/shifts';
+import { seedSystemSettings } from './seedData/systemSettings';
+import { seedTasks } from './seedData/tasks';
+import { seedUsersAndEmployees } from './seedData/usersAndEmployees';
+import { seedWarnings } from './seedData/warnings';
 
 
 

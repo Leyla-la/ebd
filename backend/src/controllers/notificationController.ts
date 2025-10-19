@@ -1,4 +1,4 @@
-import { createAndNotify } from '../services/notificationService.ts';
+import { createAndNotify } from '../services/notificationService';
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
 type Request = express.Request;

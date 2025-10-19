@@ -6,9 +6,11 @@ export const getEmployeeById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     if (!id) return res.status(400).json({ error: "Missing id" });
+    console.log('getEmployeeById - User:', req.user?.id, 'Groups:', req.user?.role, 'Requesting:', id);
     // Only allow admin or self
     const roles = req.user?.role || [];
-    if (!roles.includes("admin") && req.user?.id !== id) {
+    if (!roles.includes("SuperAdmins") && !roles.includes("Employees") && req.user?.id !== id) {
+      console.log('Access denied - Not admin and not self');
       return res.status(403).json({ error: "Forbidden" });
     }
     const employee = await prisma.employee.findUnique({

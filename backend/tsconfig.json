@@ -2,14 +2,16 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
+  // Set rootDir to project root to allow emitting for both src and prisma when included
+  // "rootDir": "./",
     "outDir": "./dist",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
+  "module": "nodenext",
+  // Allow tsc to emit compiled JavaScript
+  "noEmit": false,
+    
     "moduleResolution": "nodenext",
     "target": "esnext",
     "types": ["node"],
@@ -37,7 +39,7 @@
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
-    "verbatimModuleSyntax": false,
+  "verbatimModuleSyntax": false,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",

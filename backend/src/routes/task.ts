@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { authMiddleware } from "../middleware/authMiddleware";
 import {
   getAllTasks,
   getTaskById,
   createTask,
   updateTask,
   deleteTask
-} from "../controllers/taskController.ts";
+} from "../controllers/taskController";
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
-import { mockEmergencyContacts } from './employeeMockData.ts';
+import { mockEmergencyContacts } from './employeeMockData';
 
 export async function seedEmergencyContacts(prisma: PrismaClient) {
   console.log('Seeding emergency contacts...');

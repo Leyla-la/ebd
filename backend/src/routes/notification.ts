@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware/authMiddleware.ts";
+import { authMiddleware } from "../middleware/authMiddleware";
 import {
   getAllNotifications,
   getNotificationById,
   createNotification,
   updateNotification,
   deleteNotification
-} from "../controllers/notificationController.ts";
+} from "../controllers/notificationController";
 
 const router = Router();
 
