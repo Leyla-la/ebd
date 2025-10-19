@@ -139,6 +139,8 @@ model Employee {
   payrolls              Payroll[]
   assignedTasks         Task[]                 @relation("AssignedTasks")
   warnings              Warning[]
+  PayrollItem           PayrollItem[]
+  Payroll_Legacy        Payroll_Legacy[]
 
   @@index([departmentId])
   @@index([status])
@@ -184,6 +186,43 @@ model EmergencyContact {
 }
 
 model Payroll {
+  id             String        @id @default(cuid())
+  month          String
+  year           Int
+  payPeriodStart DateTime
+  payPeriodEnd   DateTime
+  payDate        DateTime
+  status         String        @default("PENDING")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  items          PayrollItem[]
+  Employee       Employee?     @relation(fields: [employeeId], references: [id])
+  employeeId     String?
+
+  @@map("payrolls")
+}
+
+model PayrollItem {
+  id         String   @id @default(cuid())
+  payrollId  String
+  employeeId String
+  baseSalary Float
+  bonuses    Float
+  deductions Float
+  netPay     Float
+  status     String   @default("PENDING")
+  details    Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  payroll    Payroll  @relation(fields: [payrollId], references: [id], onDelete: Cascade)
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([payrollId])
+  @@index([employeeId])
+  @@map("payroll_items")
+}
+
+model Payroll_Legacy {
   id                 String         @id @default(cuid())
   employeeId         String
   payPeriodStart     DateTime?
@@ -222,7 +261,7 @@ model Payroll {
 
   @@unique([employeeId, payPeriodStart, payPeriodEnd])
   @@index([status])
-  @@map("payrolls")
+  @@map("payrolls_legacy")
 }
 
 model Leave {
