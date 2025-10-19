@@ -5,16 +5,18 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf dist && npx tsc",
-    "start": "npm run build && node dist/src/index.ts",
+    "start": "npm run build && node dist/src/index.js",
     "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
-    "seed": "ts-node prisma/seed.ts",
+    "seed": "npm run build && node dist/prisma/seed.js",
+    "db:push": "npx prisma db push",
+    "db:migrate": "npx prisma migrate dev",
+    "db:reset": "npx prisma migrate reset --force && npm run seed",
     "prisma:generate": "npx prisma generate --generator frontend_py --generator frontend",
     "postprisma:generate": "shx cp -r ../../node_modules/@prisma/client/index.d.ts ../frontend/src/types/prismaTypes.d.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.859.0",
     "@aws-sdk/lib-storage": "^3.859.0",
@@ -30,7 +32,8 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "socket.io": "^4.8.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.0.0",
