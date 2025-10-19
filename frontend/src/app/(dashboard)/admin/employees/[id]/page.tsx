@@ -20,7 +20,7 @@ import {
   Send,
   User,
   Cake,
-  Venus as VenusMars,
+  UserCircle,
   Heart,
   Flag,
   BookOpen,
@@ -33,6 +33,8 @@ import {
   Building,
   CalendarDays,
   Clock,
+  CreditCard,
+  Shield,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -119,7 +121,6 @@ function EmployeeDetail() {
 
   if (isLoading) return <EmployeeDetailSkeleton />;
   if (isError || !employee) {
-    toast({ title: "Error", description: "Could not load employee details." });
     return <div className="p-8">Could not load employee details.</div>;
   }
 
@@ -130,7 +131,11 @@ function EmployeeDetail() {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast({ title: "Copied to clipboard!", description: text });
+    toast({ 
+      title: "Đã copy!", 
+      description: `Đã sao chép: ${text}`,
+      duration: 2000,
+    });
   };
 
   return (
@@ -201,10 +206,27 @@ function EmployeeDetail() {
                 <CardContent className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                   <InfoItem icon={User} label="Full Name" value={employee.name ?? "N/A"} />
                   <InfoItem icon={Cake} label="Date of Birth" value={employee.dateOfBirth ? format(employee.dateOfBirth, "PPP") : "N/A"} />
-                  {/* Add more fields here if they exist on the employee object */}
+                  <InfoItem icon={UserCircle} label="Gender" value={employee.gender ? toTitleCase(employee.gender) : "N/A"} />
+                  <InfoItem icon={Flag} label="Nationality" value={employee.nationality ?? "N/A"} />
+                  <InfoItem icon={Heart} label="Marital Status" value={employee.maritalStatus ? toTitleCase(employee.maritalStatus) : "N/A"} />
+                  <InfoItem icon={BookOpen} label="Religion" value={(employee as any).religion ?? "N/A"} />
+                  <InfoItem icon={MapPin} label="Place of Birth" value={(employee as any).placeOfBirth ?? "N/A"} />
+                  <InfoItem icon={CreditCard} label="Bank Account" value={(employee as any).bankAccountNumber ?? "N/A"} />
+                  <InfoItem icon={Building} label="Bank Name" value={(employee as any).bankName ?? "N/A"} />
                 </CardContent>
               </Card>
-              {/* Address Information card removed because addressString is not defined and address fields are not present on the employee object. Add back if/when address fields exist. */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Address Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <InfoItem icon={Home} label="Address" value={
+                    employee.address 
+                      ? (typeof employee.address === 'string' ? employee.address : JSON.stringify(employee.address))
+                      : "N/A"
+                  } />
+                </CardContent>
+              </Card>
             </div>
             <div className="space-y-6">
               <Card>
@@ -235,15 +257,57 @@ function EmployeeDetail() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <InfoItem icon={Briefcase} label="Position" value={employee.position ?? "N/A"} />
+                  <InfoItem icon={Building} label="Department" value={employee.department?.name ?? "N/A"} />
                   <InfoItem icon={CalendarDays} label="Hire Date" value={employee.hireDate ? format(employee.hireDate, "PPP") : "N/A"} />
-                  {/* Add more fields here if they exist on the employee object */}
+                  <InfoItem icon={User} label="Role" value={employee.role ? toTitleCase(employee.role) : "N/A"} />
+                  <InfoItem icon={Clock} label="Status" value={employee.status ? toTitleCase(employee.status) : "N/A"} />
                 </CardContent>
               </Card>
             </div>
           </div>
         </TabsContent>
 
-        {/* Remove tabs for data that does not exist on the employee object. Add back if/when those fields are present. */}
+        <TabsContent value="contract" className="mt-6">
+          <EmployeeContractsTab 
+            contracts={(employee as any).contracts || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
+
+        <TabsContent value="payroll" className="mt-6">
+          <EmployeePayrollTab 
+            payrolls={(employee as any).payrolls || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
+
+        <TabsContent value="tasks" className="mt-6">
+          <EmployeeTasksTab 
+            tasks={(employee as any).assignedTasks || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
+
+        <TabsContent value="ebdlogs" className="mt-6">
+          <EmployeeEbdLogsTab 
+            ebdLogs={(employee as any).ebdLogs || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
+
+        <TabsContent value="notifications" className="mt-6">
+          <EmployeeNotificationsTab 
+            notifications={(employee as any).notifications || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
+
+        <TabsContent value="emergency" className="mt-6">
+          <EmployeeEmergencyContactsTab 
+            emergencyContacts={(employee as any).emergencyContacts || []} 
+            isAdmin={true}
+          />
+        </TabsContent>
       </Tabs>
     </div>
   );
