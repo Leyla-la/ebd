@@ -10,6 +10,17 @@ import {
 import "@aws-amplify/ui-react/styles.css";
 import { useRouter, usePathname } from "next/navigation";
 import { fetchAuthSession } from "@aws-amplify/auth";
+
+// Configure Amplify once at module level
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID!,
+      userPoolClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID!,
+    },
+  },
+});
+
 // Debug: Log Cognito ID token payload after login
 function useLogCognitoGroups() {
   useEffect(() => {
@@ -28,16 +39,6 @@ function useLogCognitoGroups() {
     logGroups();
   }, []);
 }
-
-
-Amplify.configure({
-  Auth: {
-    Cognito: {
-      userPoolId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID!,
-      userPoolClientId: process.env.NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID!,
-    },
-  },
-});
 
 const components = {
   Header() {
