@@ -82,7 +82,7 @@ import { useGetEmployeesQuery } from "@/state/api";
 function EmployeesList() {
   const { data, isLoading, isError } = useGetEmployeesQuery();
   if (isLoading) return <EmployeeTableSkeleton />;
-  if (isError) return <div className="text-red-500">Failed to load employees.</div>;
+  if (isError) throw new Error("Failed to load employees.");
   return <DataTable data={data || []} />;
 }
 
@@ -91,7 +91,9 @@ export default function EmployeesPage() {
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-6">Employee Management</h1>
       <Suspense fallback={<EmployeeTableSkeleton />}>
-        <ErrorBoundary fallback={<p>Could not fetch employees.</p>}>
+        <ErrorBoundary
+          fallback={<div className="text-red-500">Failed to load employees.</div>}
+        >
           <EmployeesList />
         </ErrorBoundary>
       </Suspense>
