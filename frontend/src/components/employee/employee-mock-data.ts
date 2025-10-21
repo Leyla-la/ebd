@@ -83,6 +83,7 @@ import { EmergencyContactItem } from "./employee-emergency-contacts-tab";
 export const mockPayrolls: PayrollItem[] = [
   {
     id: "payroll-1",
+    employeeId: "user-123",
     month: "08",
     year: 2025,
     baseSalary: 15000000,

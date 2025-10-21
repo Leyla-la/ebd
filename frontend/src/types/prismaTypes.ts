@@ -87,6 +87,46 @@ export const ShiftSchema = z.object({
   endTime: z.string(),
 });
 
+// Contract Schema (simplified for payroll details)
+export const ContractSchema = z.object({
+  id: z.string(),
+  employeeId: z.string(),
+  contractType: z.string(),
+  startDate: z.date(),
+  endDate: z.date().nullable(),
+  baseSalary: z.number(),
+  positionAllowance: z.number().default(0),
+  transportationAllowance: z.number().default(0),
+  workingHours: z.number().optional().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+// Warning Schema (simplified for payroll details)
+export const WarningSchema = z.object({
+  id: z.string(),
+  employeeId: z.string(),
+  title: z.string(),
+  description: z.string(),
+  deduction: z.number(),
+  date: z.date(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
+
+// Kpi Schema (simplified for payroll details)
+export const KpiSchema = z.object({
+    id: z.string(),
+    employeeId: z.string(),
+    title: z.string(),
+    description: z.string(),
+    reward: z.number(),
+    month: z.number(),
+    year: z.number(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
+});
+
 // Payroll Schema
 export const PayrollSchema = z.object({
   id: z.string(),
@@ -180,6 +220,9 @@ export type Payroll = z.infer<typeof PayrollSchema>;
 export type Leave = z.infer<typeof LeaveSchema>;
 export type Camera = z.infer<typeof CameraSchema>;
 export type Policy = z.infer<typeof PolicySchema>;
+export type Contract = z.infer<typeof ContractSchema>;
+export type Warning = z.infer<typeof WarningSchema>;
+export type Kpi = z.infer<typeof KpiSchema>;
 
 // This is a comprehensive type representing the data we'll use throughout the UI.
 export type AuthenticatedUser = User & {
