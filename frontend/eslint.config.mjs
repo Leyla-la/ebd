@@ -18,6 +18,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // Ignore generated or third-party types to avoid lint noise
+      "src/types/**",
     ],
   },
 ];

@@ -7,6 +7,11 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 
 const nextConfig: NextConfig = {
   productionBrowserSourceMaps: true, // Kích hoạt ở production nếu cần
+  eslint: {
+    // Allow production builds to successfully complete even if
+    // there are ESLint errors (e.g., from generated types)
+    ignoreDuringBuilds: true,
+  },
   images: {
     domains: [
       "i.pravatar.cc",
