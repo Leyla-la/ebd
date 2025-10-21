@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getPayrollsList, getPayrollDetails, runPayrollCycle, getAllPayrolls, getPayrollById } from '../controllers/payrollController';
+import { getPayrollsList, getPayrollDetails, runPayrollCycle, getAllPayrolls, getPayrollById, getPayrollSummary, payPayroll, payPayrollItem } from '../controllers/payrollController';
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = Router();
@@ -7,7 +7,6 @@ const router = Router();
 // New, improved routes
 router.get('/list', authMiddleware(["SuperAdmins", "admin"]), getPayrollsList);
 router.get('/details/:id', authMiddleware(["SuperAdmins", "admin"]), getPayrollDetails);
-
 
 // --- Old Routes ---
 // @desc    Run a new payroll cycle for a given month and year
@@ -24,5 +23,14 @@ router.get('/', authMiddleware(["SuperAdmins", "admin"]), getAllPayrolls);
 // @route   GET /api/payrolls/:id
 // @access  Private/Admin
 router.get('/:id', authMiddleware(["SuperAdmins", "admin"]), getPayrollById);
+
+// @desc    Get payroll summary for a given period
+// @route   GET /api/payrolls/summary
+// @access  Private/Admin
+router.get('/summary', authMiddleware(["SuperAdmins", "admin"]), getPayrollSummary);
+
+// Payments
+router.post('/:id/pay', authMiddleware(["SuperAdmins", "admin"]), payPayroll);
+router.post('/items/:itemId/pay', authMiddleware(["SuperAdmins", "admin"]), payPayrollItem);
 
 export default router;

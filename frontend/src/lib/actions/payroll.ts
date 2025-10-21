@@ -1,6 +1,7 @@
 "use server";
 
 import { Payroll, Employee, Contract, Warning, Kpi, User, Department } from "@/types/prismaTypes";
+import { API_BASE } from "@/lib/constants";
 
 // Mock data for demonstration purposes
 const mockKpis: (Kpi & { employeeId: string })[] = [
@@ -389,5 +390,47 @@ export async function runPayrollGeneration() {
   } catch (error) {
     console.error("Error running payroll generation:", error);
     return { success: false, message: "Failed to run payroll generation." };
+  }
+}
+
+// --- Payroll Summary Action ---
+
+export type PayrollSummaryData = {
+  totalSalary: number;
+  totalEmployees: number;
+  totalBonus: number;
+  totalDeductions: number;
+};
+
+export async function getPayrollSummary(month: number, year: number): Promise<PayrollSummaryData> {
+  try {
+    const res = await fetch(`${API_BASE}/payrolls/summary?month=${month}&year=${year}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      // credentials or auth header can be added here if needed
+      next: { revalidate: 0 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data as PayrollSummaryData;
+    }
+
+  // Fallback mock
+  console.log(`Using fallback summary for ${month}/${year}`);
+  await new Promise(resolve => setTimeout(resolve, 300));
+    return {
+      totalSalary: 1250000000,
+      totalEmployees: 78,
+      totalBonus: 85000000,
+      totalDeductions: 32000000,
+    };
+  } catch (error) {
+    console.error("Failed to fetch payroll summary:", error);
+    return {
+      totalSalary: 0,
+      totalEmployees: 0,
+      totalBonus: 0,
+      totalDeductions: 0,
+    };
   }
 }

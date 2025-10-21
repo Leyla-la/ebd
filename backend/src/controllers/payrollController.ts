@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import express from 'express';
 import * as payrollService from '../services/payrollService';
 import { calculateEmployeeSalary } from '../services/payrollService';
+import * as paymentService from '../services/paymentService';
 type Request = express.Request;
 type Response = express.Response;
 
@@ -29,6 +30,22 @@ export const getPayrollDetails = async (req: Request, res: Response) => {
   } catch (error) {
     const err = error as Error
     res.status(500).json({ message: 'Error fetching payroll details', error: err.message });
+  }
+};
+
+export const getPayrollSummary = async (req: Request, res: Response) => {
+  try {
+    const { month, year } = req.query;
+
+    if (!month || !year) {
+      return res.status(400).json({ message: 'Month and year are required' });
+    }
+
+    const summary = await payrollService.getPayrollSummary(Number(month), Number(year));
+    res.json(summary);
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ message: 'Error fetching payroll summary', error: err.message });
   }
 };
 
@@ -160,5 +177,31 @@ export const runPayrollCycle = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to run payroll cycle', details: error });
     }
+};
+
+// POST /payrolls/:id/pay - pay all pending items in a payroll run
+export const payPayroll = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) return res.status(400).json({ error: 'Payroll ID is required' });
+    const results = await paymentService.payAllPendingInPayroll(id);
+    return res.json({ message: 'Payment processing finished', results });
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).json({ error: 'Failed to process payments', details: err.message });
+  }
+};
+
+// POST /payrolls/items/:itemId/pay - pay a single payroll item
+export const payPayrollItem = async (req: Request, res: Response) => {
+  try {
+    const { itemId } = req.params;
+    if (!itemId) return res.status(400).json({ error: 'Payroll Item ID is required' });
+    const result = await paymentService.payPayrollItem(itemId);
+    return res.json(result);
+  } catch (error) {
+    const err = error as Error;
+    return res.status(500).json({ error: 'Failed to process item payment', details: err.message });
+  }
 };
 

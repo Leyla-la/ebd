@@ -162,3 +162,50 @@ export const calculateEmployeeSalary = async (employeeId: string, startDate: Dat
     },
   };
 };
+
+export const getPayrollSummary = async (month: number, year: number) => {
+  const payrollRun = await prisma.payroll.findFirst({
+    where: {
+      month: String(month),
+      year: year,
+    },
+  });
+
+  if (!payrollRun) {
+    // Return zeroed data if no payroll run found for the period
+    return {
+      totalSalary: 0,
+      totalEmployees: 0,
+      totalBonus: 0,
+      totalDeductions: 0,
+    };
+  }
+
+  const summary = await prisma.payrollItem.aggregate({
+    where: {
+      payrollId: payrollRun.id,
+    },
+    _sum: {
+      baseSalary: true,
+      bonuses: true,
+      deductions: true,
+    },
+    _count: {
+      _all: true,
+    },
+  });
+
+  const employeeCount = await prisma.payrollItem.groupBy({
+    by: ['employeeId'],
+    where: {
+      payrollId: payrollRun.id,
+    },
+  });
+
+  return {
+    totalSalary: summary._sum.baseSalary || 0,
+    totalEmployees: employeeCount.length,
+    totalBonus: summary._sum.bonuses || 0,
+    totalDeductions: summary._sum.deductions || 0,
+  };
+};

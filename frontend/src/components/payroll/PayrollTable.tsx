@@ -41,7 +41,7 @@ export default function PayrollTable({ payrolls, onViewDetails }: PayrollTablePr
       </TableHeader>
       <TableBody>
         {payrolls.map((payroll) => (
-          <TableRow key={payroll.id} className="border-b-white/10 hover:bg-white/5">
+          <TableRow key={payroll.id} className="border-b-white/10 hover:bg-white/10 transition-colors">
             <TableCell>
               <div className="font-medium">{payroll.employee.name}</div>
               <div className="text-sm text-muted-foreground">
@@ -70,7 +70,7 @@ export default function PayrollTable({ payrolls, onViewDetails }: PayrollTablePr
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="glass-card">
+                <DropdownMenuContent align="end" className="liquid-glass-card">
                   <DropdownMenuItem onClick={() => onViewDetails(payroll)}>
                     Xem chi tiết
                   </DropdownMenuItem>
