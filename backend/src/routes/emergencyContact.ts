@@ -11,14 +11,14 @@ import {
 const router = Router();
 
 // GET /emergency-contacts (admin: all, employee: only own)
-router.get("/", authMiddleware(["admin", "employee"]), getAllEmergencyContacts);
+router.get("/", authMiddleware(["SuperAdmins", "admin", "employee"]), getAllEmergencyContacts);
 // GET /emergency-contacts/:id (admin: any, employee: only own)
-router.get("/:id", authMiddleware(["admin", "employee"]), getEmergencyContactById);
+router.get("/:id", authMiddleware(["SuperAdmins", "admin", "employee"]), getEmergencyContactById);
 // POST /emergency-contacts (admin only)
-router.post("/", authMiddleware(["admin"]), createEmergencyContact);
+router.post("/", authMiddleware(["SuperAdmins", "admin"]), createEmergencyContact);
 // PUT /emergency-contacts/:id (admin only)
-router.put("/:id", authMiddleware(["admin"]), updateEmergencyContact);
+router.put("/:id", authMiddleware(["SuperAdmins", "admin"]), updateEmergencyContact);
 // DELETE /emergency-contacts/:id (admin only)
-router.delete("/:id", authMiddleware(["admin"]), deleteEmergencyContact);
+router.delete("/:id", authMiddleware(["SuperAdmins", "admin"]), deleteEmergencyContact);
 
 export default router;

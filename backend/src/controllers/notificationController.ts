@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 // GET /notifications
 export const getAllNotifications = async (req: Request, res: Response) => {
   try {
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) {
       // Admin: get all notifications
       const notifications = await prisma.notification.findMany({ include: { employee: true } });
@@ -35,7 +35,7 @@ export const getNotificationById = async (req: Request, res: Response) => {
     if (!id) return res.status(400).json({ error: "Missing id" });
     const notification = await prisma.notification.findUnique({ where: { id: id as string }, include: { employee: true } });
     if (!notification) return res.status(404).json({ error: "Not found" });
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) return res.json(notification);
     // Employee: only own
     const userId = req.user?.id;

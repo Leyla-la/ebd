@@ -11,14 +11,14 @@ import {
 const router = Router();
 
 // GET /tasks (admin: all, employee: only assigned)
-router.get("/", authMiddleware(["admin", "employee"]), getAllTasks);
+router.get("/", authMiddleware(["SuperAdmins", "admin", "employee"]), getAllTasks);
 // GET /tasks/:id (admin: any, employee: only assigned)
-router.get("/:id", authMiddleware(["admin", "employee"]), getTaskById);
+router.get("/:id", authMiddleware(["SuperAdmins", "admin", "employee"]), getTaskById);
 // POST /tasks (admin only)
-router.post("/", authMiddleware(["admin"]), createTask);
+router.post("/", authMiddleware(["SuperAdmins", "admin"]), createTask);
 // PUT /tasks/:id (admin only)
-router.put("/:id", authMiddleware(["admin"]), updateTask);
+router.put("/:id", authMiddleware(["SuperAdmins", "admin"]), updateTask);
 // DELETE /tasks/:id (admin only)
-router.delete("/:id", authMiddleware(["admin"]), deleteTask);
+router.delete("/:id", authMiddleware(["SuperAdmins", "admin"]), deleteTask);
 
 export default router;

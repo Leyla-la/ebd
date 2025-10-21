@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /emergency-contacts
 export const getAllEmergencyContacts = async (req: Request, res: Response) => {
   try {
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) {
       // Admin: get all contacts
       const contacts = await prisma.emergencyContact.findMany({ include: { employee: true } });
@@ -34,7 +34,7 @@ export const getEmergencyContactById = async (req: Request, res: Response) => {
     if (!id) return res.status(400).json({ error: "Missing id" });
     const contact = await prisma.emergencyContact.findUnique({ where: { id: id as string }, include: { employee: true } });
     if (!contact) return res.status(404).json({ error: "Not found" });
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) return res.json(contact);
     // Employee: only own
     const userId = req.user?.id;

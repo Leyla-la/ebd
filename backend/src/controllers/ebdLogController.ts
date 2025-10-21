@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /ebd-logs
 export const getAllEbdLogs = async (req: Request, res: Response) => {
   try {
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) {
       // Admin: get all logs
       const logs = await prisma.ebdLog.findMany({ include: { employee: true } });
@@ -34,7 +34,7 @@ export const getEbdLogById = async (req: Request, res: Response) => {
     if (!id) return res.status(400).json({ error: "Missing id" });
     const log = await prisma.ebdLog.findUnique({ where: { id: id as string }, include: { employee: true } });
     if (!log) return res.status(404).json({ error: "Not found" });
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) return res.json(log);
     // Employee: only own
     const userId = req.user?.id;

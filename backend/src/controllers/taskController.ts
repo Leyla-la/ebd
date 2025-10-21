@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // GET /tasks
 export const getAllTasks = async (req: Request, res: Response) => {
   try {
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) {
       // Admin: get all tasks
       const tasks = await prisma.task.findMany({ include: { assignedTo: true, assignedBy: true } });
@@ -34,7 +34,7 @@ export const getTaskById = async (req: Request, res: Response) => {
     if (!id) return res.status(400).json({ error: "Missing id" });
     const task = await prisma.task.findUnique({ where: { id: id as string }, include: { assignedTo: true, assignedBy: true } });
     if (!task) return res.status(404).json({ error: "Not found" });
-    const roles = req.user?.role || [];
+    const roles = req.user?.roles || [];
     if (roles.includes("admin")) return res.json(task);
     // Employee: only assigned
     const userId = req.user?.id;

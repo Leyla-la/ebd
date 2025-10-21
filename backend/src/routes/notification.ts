@@ -11,14 +11,14 @@ import {
 const router = Router();
 
 // GET /notifications (admin: all, employee: only own)
-router.get("/", authMiddleware(["admin", "employee"]), getAllNotifications);
+router.get("/", authMiddleware(["SuperAdmins", "admin", "employee"]), getAllNotifications);
 // GET /notifications/:id (admin: any, employee: only own)
-router.get("/:id", authMiddleware(["admin", "employee"]), getNotificationById);
+router.get("/:id", authMiddleware(["SuperAdmins", "admin", "employee"]), getNotificationById);
 // POST /notifications (admin only)
-router.post("/", authMiddleware(["admin"]), createNotification);
+router.post("/", authMiddleware(["SuperAdmins", "admin"]), createNotification);
 // PUT /notifications/:id (admin only)
-router.put("/:id", authMiddleware(["admin"]), updateNotification);
+router.put("/:id", authMiddleware(["SuperAdmins", "admin"]), updateNotification);
 // DELETE /notifications/:id (admin only)
-router.delete("/:id", authMiddleware(["admin"]), deleteNotification);
+router.delete("/:id", authMiddleware(["SuperAdmins", "admin"]), deleteNotification);
 
 export default router;

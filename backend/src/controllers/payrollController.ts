@@ -1,10 +1,92 @@
 import { PrismaClient } from '@prisma/client';
 import express from 'express';
+import * as payrollService from '../services/payrollService';
 import { calculateEmployeeSalary } from '../services/payrollService';
 type Request = express.Request;
 type Response = express.Response;
 
+export const getPayrollsList = async (req: Request, res: Response) => {
+  try {
+    const payrolls = await payrollService.getPayrollsList();
+    res.json(payrolls);
+  } catch (error) {
+    const err = error as Error
+    res.status(500).json({ message: 'Error fetching payrolls list', error: err.message });
+  }
+};
+
+export const getPayrollDetails = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'Payroll ID is required' });
+    }
+    const payrollDetails = await payrollService.getPayrollDetails(id);
+    if (!payrollDetails) {
+      return res.status(404).json({ message: 'Payroll details not found' });
+    }
+    res.json(payrollDetails);
+  } catch (error) {
+    const err = error as Error
+    res.status(500).json({ message: 'Error fetching payroll details', error: err.message });
+  }
+};
+
 const prisma = new PrismaClient();
+
+// GET /payrolls - Get all payroll runs
+export const getAllPayrolls = async (req: Request, res: Response) => {
+  try {
+    const payrolls = await prisma.payroll.findMany({
+      include: {
+        items: {
+          include: {
+            employee: true
+          }
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    res.json(payrolls);
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ error: 'Failed to fetch payrolls', details: err.message });
+  }
+};
+
+// GET /payrolls/:id - Get a single payroll run by ID
+export const getPayrollById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ error: 'Payroll ID is required' });
+    }
+    const payroll = await prisma.payroll.findUnique({
+      where: { id },
+      include: {
+        items: {
+          include: {
+            employee: {
+              include: {
+                user: true,
+                department: true
+              }
+            }
+          }
+        }
+      }
+    });
+    if (!payroll) {
+      return res.status(404).json({ error: 'Payroll not found' });
+    }
+    res.json(payroll);
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ error: 'Failed to fetch payroll', details: err.message });
+  }
+};
 
 // POST /payrolls/run
 export const runPayrollCycle = async (req: Request, res: Response) => {
@@ -78,49 +160,5 @@ export const runPayrollCycle = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({ error: 'Failed to run payroll cycle', details: error });
     }
-};
-
-
-// GET /payrolls
-export const getAllPayrolls = async (req: Request, res: Response) => {
-  try {
-    const roles = req.user?.role || [];
-    if (roles.includes("admin")) {
-      // Admin: get all payrolls
-      const payrolls = await prisma.payroll.findMany({ include: { items: true } });
-      return res.json(payrolls);
-    } else {
-      // Non-admins should not access this
-      return res.status(403).json({ error: "Forbidden" });
-    }
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch payrolls', details: error });
-  }
-};
-
-// GET /payrolls/:id
-export const getPayrollById = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    if (!id) return res.status(400).json({ error: "Missing id" });
-    const payroll = await prisma.payroll.findUnique({ 
-        where: { id: id as string }, 
-        include: { 
-            items: {
-                include: {
-                    employee: true
-                }
-            } 
-        } 
-    });
-    if (!payroll) return res.status(404).json({ error: "Not found" });
-    
-    const roles = req.user?.role || [];
-    if (roles.includes("admin")) return res.json(payroll);
-
-    return res.status(403).json({ error: "Forbidden" });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch payroll', details: error });
-  }
 };
 

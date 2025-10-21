@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 // GET /employees (admin only)
-router.get("/", authMiddleware(["admin"]), getAllEmployees);
+router.get("/", authMiddleware(["SuperAdmins", "admin"]), getAllEmployees);
 
 // GET /employees/:id (admin or self)
 router.get("/:id", authMiddleware(["admin", "employee"]), getEmployeeById);
