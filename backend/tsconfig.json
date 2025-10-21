@@ -8,11 +8,12 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-  "module": "nodenext",
+  "module": "commonjs",
   // Allow tsc to emit compiled JavaScript
   "noEmit": false,
     
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
     "target": "esnext",
     "types": ["node"],
     // For nodejs:
