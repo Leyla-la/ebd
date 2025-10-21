@@ -1,5 +1,3 @@
-"use server";
-
 import { Payroll, Employee, Contract, Warning, Kpi, User, Department } from "@/types/prismaTypes";
 import { API_BASE } from "@/lib/constants";
 
@@ -402,11 +400,27 @@ export type PayrollSummaryData = {
   totalDeductions: number;
 };
 
+// Try to obtain the Cognito idToken (client-side). On server, this will return null.
+async function getIdToken(): Promise<string | null> {
+  try {
+    // Dynamic import to avoid bundling issues when used server-side.
+    const { fetchAuthSession } = await import('@aws-amplify/auth');
+    const session = await fetchAuthSession();
+    return session.tokens?.idToken?.toString() ?? null;
+  } catch (e) {
+    return null;
+  }
+}
+
 export async function getPayrollSummary(month: number, year: number): Promise<PayrollSummaryData> {
   try {
+    const idToken = await getIdToken();
     const res = await fetch(`${API_BASE}/payrolls/summary?month=${month}&year=${year}`, {
       method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+      },
       // credentials or auth header can be added here if needed
       next: { revalidate: 0 },
     });
