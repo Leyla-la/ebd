@@ -66,7 +66,7 @@ export const api = createApi({
           }
           const cognitoId = payload.sub;
           const response = await fetch(
-            `${API_URL}/users/cognito/${cognitoId}`,
+            `${API_URL}/users/cognito`, // No longer need to pass cognitoId in the URL
             {
               headers: { Authorization: `Bearer ${idToken}` },
               signal,
