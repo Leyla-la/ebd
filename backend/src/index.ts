@@ -1,3 +1,5 @@
+/// <reference path="./types/express.d.ts" />
+
 // (Global request logger moved below)
 import express from "express";
 console.log('=== Express app started ===');
@@ -51,15 +53,15 @@ app.get("/", (req, res) => {
 });
 
 
-app.use("/api/auth", authRoutes);
-app.use("/api/employees", employeeRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/payrolls", payrollRoutes);
-app.use("/api/tasks", taskRoutes);
-app.use("/api/ebd-logs", ebdLogRoutes); // Registering ebdLog route
-app.use("/api/notifications", notificationRoutes); // Registering notification route
-app.use("/api/contracts", contractRoutes); // Registering contract route
-app.use("/api/emergency-contacts", emergencyContactRoutes); // Registering emergencyContact route
+app.use("/auth", authRoutes);
+app.use("/employees", employeeRoutes);
+app.use("/users", userRoutes);
+app.use("/payrolls", payrollRoutes);
+app.use("/tasks", taskRoutes);
+app.use("/ebd-logs", ebdLogRoutes); // Registering ebdLog route
+app.use("/notifications", notificationRoutes); // Registering notification route
+app.use("/contracts", contractRoutes); // Registering contract route
+app.use("/emergency-contacts", emergencyContactRoutes); // Registering emergencyContact route
 
 
 // SERVER
