@@ -1,15 +1,81 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, UserRole } from '@prisma/client';
 import express from 'express';
+import jwt from 'jsonwebtoken';
+
 type Request = express.Request;
 type Response = express.Response;
 
 const prisma = new PrismaClient();
 
+const findOrCreateUser = async (payload: any): Promise<any> => {
+  const cognitoId = payload.sub;
+  if (!cognitoId) {
+    throw new Error('Cognito ID (sub) is missing from the token payload.');
+  }
+
+  let user = await prisma.user.findUnique({
+    where: { cognitoId },
+  });
+
+  if (user) {
+    console.log(`[findOrCreateUser] Found existing user with cognitoId: ${cognitoId}`);
+    return user;
+  }
+
+  console.log(`[findOrCreateUser] No user found with cognitoId: ${cognitoId}. Creating new user.`);
+  
+  const userCognitoGroups = payload['cognito:groups'] || [];
+  let role: UserRole = UserRole.EMPLOYEE; // Default role
+
+  if (userCognitoGroups.includes('SuperAdmins')) {
+    role = UserRole.ADMIN;
+  }
+
+  const newUser = await prisma.user.create({
+    data: {
+      cognitoId: cognitoId,
+      email: payload.email,
+      name: payload.name || payload.username || 'Default Name',
+      role: role,
+      isActive: true,
+      isSuperuser: role === UserRole.ADMIN,
+      avatar: payload.picture || null,
+    },
+  });
+
+  console.log(`[findOrCreateUser] Successfully created new user with cognitoId: ${cognitoId}`);
+  return newUser;
+};
+
+export const getUserByCognitoId = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ error: 'Authorization header is missing.' });
+    }
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token is missing from Authorization header.' });
+    }
+
+    const payload = jwt.decode(token);
+    if (!payload || typeof payload === 'string') {
+      return res.status(400).json({ error: 'Invalid token payload.' });
+    }
+
+    const user = await findOrCreateUser(payload);
+    res.json(user);
+  } catch (error: any) {
+    console.error('[getUserByCognitoId] Failed to find or create user:', error);
+    res.status(500).json({ error: 'Failed to process user authentication.', details: error.message });
+  }
+};
+
 // GET /users (admin only)
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const roles = req.user?.role || [];
-  if (!roles.includes('SuperAdmins')) {
+    const roles = req.user?.roles || [];
+    if (!roles.includes('SuperAdmins') && !roles.includes('admin')) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const users = await prisma.user.findMany();
@@ -20,78 +86,16 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 // GET /users/:id (admin or self)
-import jwt from 'jsonwebtoken';
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    const roles = req.user?.role || [];
-    if (!roles.includes('SuperAdmins') && req.user?.id !== id) {
+    const roles = req.user?.roles || [];
+    if (!roles.includes('SuperAdmins') && !roles.includes('admin') && req.user?.id !== id) {
       return res.status(403).json({ error: 'Forbidden' });
     }
-    console.log('[getUserById] Looking for user with id:', id);
-    let user = await prisma.user.findUnique({ where: { id: id as string } });
+    const user = await prisma.user.findUnique({ where: { id: id as string } });
     if (!user) {
-      console.log('[getUserById] User not found, attempting to create from JWT');
-      const authHeader = req.headers.authorization;
-      if (!authHeader) {
-        console.error('[getUserById] No Authorization header');
-        return res.status(401).json({ error: 'No Authorization header' });
-      }
-      const token = authHeader.split(' ')[1];
-      let payload: any = null;
-      if (!token) {
-        console.error('[getUserById] No JWT token found in Authorization header');
-        return res.status(400).json({ error: 'No JWT token found in Authorization header' });
-      }
-      try {
-        payload = jwt.decode(token);
-      } catch (e) {
-        console.error('[getUserById] Invalid JWT', e);
-        return res.status(400).json({ error: 'Invalid JWT', details: e });
-      }
-      if (!payload || !payload.sub || !payload.email) {
-        console.error('[getUserById] Invalid JWT payload:', payload);
-        return res.status(400).json({ error: 'Invalid JWT payload: missing sub or email' });
-      }
-
-      // Determine role from cognito:groups
-      let role = 'EMPLOYEE';
-      if (payload['cognito:groups'] && Array.isArray(payload['cognito:groups'])) {
-        if (payload['cognito:groups'].includes('SuperAdmins')) role = 'ADMIN';
-      }
-
-      const newUserData: any = {
-        cognitoId: payload.sub,
-        email: payload.email,
-        name: payload.name || null,
-        role: role,
-        isActive: true,
-        isSuperuser: role === 'ADMIN',
-        avatar: payload.picture || null,
-      };
-      try {
-        user = await prisma.user.create({ data: newUserData });
-        console.log('[getUserById] User created:', user);
-      } catch (e: any) {
-        console.error('[getUserById] Error creating user:', e);
-        // If user already exists by email or cognitoId, fetch and return it
-        if (e.code === 'P2002') {
-          user = await prisma.user.findUnique({ where: { email: payload.email } });
-          if (!user && payload.sub) {
-            user = await prisma.user.findUnique({ where: { cognitoId: payload.sub } });
-          }
-          if (!user) {
-            console.error('[getUserById] User exists but could not be found by email or cognitoId');
-            return res.status(500).json({ error: 'User exists but could not be found by email or cognitoId' });
-          }
-        } else {
-          return res.status(500).json({ error: 'Failed to auto-create user', details: e });
-        }
-      }
-    }
-    if (!user) {
-      console.error('[getUserById] User still not found after all attempts');
       return res.status(404).json({ error: 'User not found' });
     }
     res.json(user);
@@ -105,8 +109,8 @@ export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    const roles = req.user?.role || [];
-  if (!roles.includes('SuperAdmins') && req.user?.id !== id) {
+    const roles = req.user?.roles || [];
+    if (!roles.includes('SuperAdmins') && !roles.includes('admin') && req.user?.id !== id) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     const data = req.body;
@@ -122,8 +126,8 @@ export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    const roles = req.user?.role || [];
-  if (!roles.includes('SuperAdmins')) {
+    const roles = req.user?.roles || [];
+    if (!roles.includes('SuperAdmins') && !roles.includes('admin')) {
       return res.status(403).json({ error: 'Forbidden' });
     }
     await prisma.user.delete({ where: { id: id as string } });
